@@ -18,8 +18,8 @@ public class ServerSecurityConfigurationTest {
             serverSecurityConfigurer
                     .clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
                         @Override
-                        public void customize(ClientAuthenticationConfigurer clientAuthenticationConfigurer) {
-
+                        public void customize(ClientAuthenticationConfigurer configurer) {
+                            
                         }
                     })
                     .authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {

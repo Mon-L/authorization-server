@@ -1,11 +1,14 @@
 package cn.zcn.authorization.server.configurer;
 
+import cn.zcn.authorization.server.ClientService;
+import cn.zcn.authorization.server.ServerConfig;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -20,8 +23,25 @@ public class ServerSecurityConfigurer {
             SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>> configurers = createConfigurers();
 
     private RequestMatcher requestMatcher;
+    private ClientService clientService;
+    private ServerConfig serverConfig;
 
-    public final void init(HttpSecurity builder) throws Exception {
+    public final void init(HttpSecurity builder) {
+        Assert.notNull(serverConfig, "ProviderConfig must not be null.");
+        Assert.notNull(clientService, "ClientService must not be null.");
+
+        builder.getSharedObjects().put(ClientService.class, clientService);
+        builder.getSharedObjects().put(ServerConfig.class, serverConfig);
+    }
+
+    public ServerSecurityConfigurer clientService(ClientService clientService) {
+        this.clientService = clientService;
+        return this;
+    }
+
+    public ServerSecurityConfigurer providerConfig(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+        return this;
     }
 
     public ServerSecurityConfigurer authorizationEndpoint(Customizer<AuthorizationEndpointConfigurer> configurer) {
