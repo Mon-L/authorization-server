@@ -9,6 +9,7 @@ import cn.zcn.authorization.server.authentication.extractor.ClientSecretBasicExt
 import cn.zcn.authorization.server.authentication.extractor.ClientSecretPostExtractor;
 import cn.zcn.authorization.server.authentication.provider.ClientSecretAuthenticationProvider;
 import cn.zcn.authorization.server.authentication.provider.JWTAssertionAuthenticationProvider;
+import cn.zcn.authorization.server.exception.OAuth2ExceptionWriter;
 import cn.zcn.authorization.server.filter.ClientAuthenticationFilter;
 import com.google.common.collect.Sets;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +34,7 @@ import java.util.Set;
 
 /**
  * 客户端身份验证配置。用于配置客户端身份校验的策略。
- * 该配置类会往 {@code HttpSecurity} 中添加一个 {@code ClientAuthenticationFilter}，用于拦截需要客户端身份校验的端点。
+ * 该配置类会往 {@link HttpSecurity} 中添加一个 {@link ClientAuthenticationFilter}，用于拦截需要客户端身份校验的端点。
  */
 public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
@@ -42,18 +44,9 @@ public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<De
 
     private List<AuthenticationExtractor> authenticationExtractors;
 
-    private AuthenticationSuccessHandler authenticationSuccessHandler = (httpServletRequest, httpServletResponse, authentication) -> {
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authentication);
-        SecurityContextHolder.setContext(securityContext);
-    };
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    private AuthenticationFailureHandler authenticationFailureHandler = (httpServletRequest, httpServletResponse, e) -> {
-        SecurityContextHolder.clearContext();
-
-        //output
-    };
-
+    private AuthenticationFailureHandler authenticationFailureHandler;
 
     /**
      * 允许的客户端认证方式
@@ -66,12 +59,29 @@ public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<De
     public void init(HttpSecurity builder) throws Exception {
         ClientService clientService = builder.getSharedObject(ClientService.class);
         ServerConfig serverConfig = builder.getSharedObject(ServerConfig.class);
+        OAuth2ExceptionWriter exceptionWriter = builder.getSharedObject(OAuth2ExceptionWriter.class);
 
         this.requestMatcher = new OrRequestMatcher(
                 new AntPathRequestMatcher(serverConfig.getTokenEndpoint()),
                 new AntPathRequestMatcher(serverConfig.getIntrospectionEndpoint()),
                 new AntPathRequestMatcher(serverConfig.getRevocationEndpoint())
         );
+
+        if (this.authenticationSuccessHandler == null) {
+            this.authenticationSuccessHandler = (request, response, authentication) -> {
+                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+                securityContext.setAuthentication(authentication);
+                SecurityContextHolder.setContext(securityContext);
+            };
+        }
+
+        if (this.authenticationFailureHandler == null) {
+            this.authenticationFailureHandler = (request, response, e) -> {
+                SecurityContextHolder.clearContext();
+
+                exceptionWriter.write(e, new ServletWebRequest(request, response));
+            };
+        }
 
         authenticationExtractors = new ArrayList<>();
         if (allowedClientAuthMethods.contains(ClientAuthMethod.SECRET_BASIC)) {

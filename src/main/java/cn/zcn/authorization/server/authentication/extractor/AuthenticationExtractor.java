@@ -17,7 +17,7 @@ public interface AuthenticationExtractor {
     Authentication extract(HttpServletRequest request) throws AuthenticationException;
 
     /**
-     * 获取请求匹配器。用于验证 {@code AuthenticationExtractor} 是否支持该请求
+     * 获取请求匹配器。用于验证 {@link AuthenticationExtractor} 是否支持该请求
      */
     RequestMatcher getRequestMatcher();
 }
