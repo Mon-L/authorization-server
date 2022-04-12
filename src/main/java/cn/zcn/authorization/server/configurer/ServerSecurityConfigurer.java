@@ -34,9 +34,9 @@ public class ServerSecurityConfigurer {
     public final void init(HttpSecurity builder) {
         Assert.notNull(clientService, "ClientService must not be null.");
 
-        builder.getSharedObjects().put(ServerConfig.class, serverConfig);
-        builder.getSharedObjects().put(ClientService.class, clientService);
-        builder.getSharedObjects().put(OAuth2ExceptionWriter.class, exceptionWriter);
+        builder.setSharedObject(ServerConfig.class, serverConfig);
+        builder.setSharedObject(ClientService.class, clientService);
+        builder.setSharedObject(OAuth2ExceptionWriter.class, exceptionWriter);
     }
 
     public ServerSecurityConfigurer clientService(ClientService clientService) {
@@ -82,7 +82,7 @@ public class ServerSecurityConfigurer {
 
         configurers.put(ClientAuthenticationConfigurer.class, new ClientAuthenticationConfigurer());
         configurers.put(AuthorizationEndpointConfigurer.class, new AuthorizationEndpointConfigurer());
-        configurers.put(TokenEndpointConfigurer.class, new ClientAuthenticationConfigurer());
+        configurers.put(TokenEndpointConfigurer.class, new TokenEndpointConfigurer());
         return configurers;
     }
 
