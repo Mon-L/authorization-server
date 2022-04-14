@@ -87,15 +87,15 @@ public class DefaultOAuth2ExceptionWriter implements OAuth2ExceptionWriter {
 
         cause = throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class, causeChain);
         if (cause != null) {
-            return OAuth2Error.create(OAuth2Error.UNAUTHORIZED, cause.getMessage(), source);
+            return OAuth2Error.createException(OAuth2Error.UNAUTHORIZED, cause.getMessage(), source);
         }
 
         cause = throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
         if (cause != null) {
-            return OAuth2Error.create(OAuth2Error.ACCESS_DENIED, cause.getMessage(), source);
+            return OAuth2Error.createException(OAuth2Error.ACCESS_DENIED, cause.getMessage(), source);
         }
 
-        return OAuth2Error.create(OAuth2Error.SERVER_ERROR, source.getMessage(), source);
+        return OAuth2Error.createException(OAuth2Error.SERVER_ERROR, source.getMessage(), source);
     }
 
     private static class DefaultExceptionConverter implements Converter<OAuth2Exception, Map<String, String>> {

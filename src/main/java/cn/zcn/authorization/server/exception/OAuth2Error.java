@@ -55,19 +55,19 @@ public class OAuth2Error {
         return oAuth2Error;
     }
 
-    public static OAuth2Exception create(OAuth2Error oAuth2Error) {
+    public static OAuth2Exception createException(OAuth2Error oAuth2Error) {
         OAuth2Exception exception = new OAuth2Exception(oAuth2Error.getErrorCode());
         exception.httpStatus(oAuth2Error.httpStatus);
         return exception;
     }
 
-    public static OAuth2Exception create(OAuth2Error oAuth2Error, String message) {
+    public static OAuth2Exception createException(OAuth2Error oAuth2Error, String message) {
         OAuth2Exception exception = new OAuth2Exception(oAuth2Error.getErrorCode(), message);
         exception.httpStatus(oAuth2Error.httpStatus);
         return exception;
     }
 
-    public static OAuth2Exception create(OAuth2Error oAuth2Error, String message, Exception source) {
+    public static OAuth2Exception createException(OAuth2Error oAuth2Error, String message, Exception source) {
         OAuth2Exception exception = new OAuth2Exception(oAuth2Error.getErrorCode(), message, source);
         exception.httpStatus(oAuth2Error.httpStatus);
         return exception;
