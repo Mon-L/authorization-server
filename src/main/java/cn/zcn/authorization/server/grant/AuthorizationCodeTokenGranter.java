@@ -2,6 +2,7 @@ package cn.zcn.authorization.server.grant;
 
 import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.OAuth2Error;
+import cn.zcn.authorization.server.exception.OAuth2Exception;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -20,24 +21,24 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
     }
 
     @Override
-    protected AccessToken doGrant(Client client, TokenRequest tokenRequest) {
+    protected AccessToken doGrant(Client client, TokenRequest tokenRequest) throws OAuth2Exception {
         Map<String, String> parameters = tokenRequest.getRequestParameters();
         String authorizationCode = parameters.get(OAuth2Constants.CODE);
         String redirectUri = parameters.get(OAuth2Constants.REDIRECT_URI);
 
         if (authorizationCode == null) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "An authorization code must be supplied.");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An authorization code must be supplied.");
         }
 
         OAuth2PreviousAuthentication previousAuthentication = authorizationCodeService.consumeAuthorizationCode(authorizationCode);
         AuthorizationRequest authorizationRequest = previousAuthentication.getAuthorizationRequest();
 
         if (!client.getClientId().equals(authorizationRequest.getClientId())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Mismatch client id.");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch client id.");
         }
 
         if (!StringUtils.hasText(redirectUri) || !authorizationRequest.getRedirectUri().equals(redirectUri)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Mismatch redirect uri.");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch redirect uri.");
         }
 
         tokenRequest.setAuthorizationRequest(authorizationRequest);
