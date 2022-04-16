@@ -4,9 +4,15 @@ import cn.zcn.authorization.server.exception.JOSERuntimeException;
 import com.nimbusds.jose.JWEObject;
 
 /**
- * decrypt JWE
+ * 解密 JWE
  */
 public interface JWTDecrypter {
 
-    void decrypt(JWEObject jwt) throws JOSERuntimeException;
+    /**
+     * 解密 JWE
+     *
+     * @param jwe 待解密的 JWE
+     * @throws JOSERuntimeException 解密异常
+     */
+    void decrypt(JWEObject jwe) throws JOSERuntimeException;
 }

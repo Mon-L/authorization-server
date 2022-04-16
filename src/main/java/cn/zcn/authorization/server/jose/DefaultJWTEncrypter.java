@@ -18,11 +18,11 @@ import org.springframework.util.StringUtils;
 import java.security.Provider;
 import java.util.List;
 
-/**
- * encrypt jwe
- */
 public class DefaultJWTEncrypter implements JWTEncrypter {
 
+    /**
+     * 加密所需的公钥集合
+     */
     private final JWKSource<SecurityContext> jwkSource;
     private final JWEEncrypterFactory jweEncrypterFactory;
 
@@ -33,7 +33,7 @@ public class DefaultJWTEncrypter implements JWTEncrypter {
     public DefaultJWTEncrypter(JWKSource<SecurityContext> jwkSource, Provider provider) {
         Assert.notNull(jwkSource, "jwkSource must not be null");
         Assert.notNull(provider, "provider must not be null");
-        
+
         this.jwkSource = jwkSource;
         this.jweEncrypterFactory = new DefaultJWEEncrypterFactory();
         this.jweEncrypterFactory.getJCAContext().setProvider(provider);
@@ -72,11 +72,16 @@ public class DefaultJWTEncrypter implements JWTEncrypter {
         }
     }
 
+    /**
+     * 符合以下情况，将返回添加了 kid 的新的 JWEHeader
+     * 1. JWEHeader 不含 kid
+     * 2. 入参 kid 不为 null 或 空字符串
+     *
+     * @param header JWE Header
+     * @param kid    JWK kid
+     * @return 返回添加了 kid 的新的 {@link JWEHeader}
+     */
     private JWEHeader addKeyIdIfNecessary(JWEHeader header, String kid) {
-        if (StringUtils.hasText(header.getKeyID())) {
-            return header;
-        }
-
         if (!StringUtils.hasText(header.getKeyID()) && StringUtils.hasText(kid)) {
             header = new JWEHeader.Builder(header).keyID(kid).build();
         }
@@ -85,15 +90,12 @@ public class DefaultJWTEncrypter implements JWTEncrypter {
     }
 
     private JWK selectJWK(JWEHeader header) {
-        List<JWK> jwks = null;
+        List<JWK> jwks;
 
         try {
             JWKMatcher jwkMatcher = JWKMatcher.forJWEHeader(header);
-
-            if (jwkMatcher != null) {
-                JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
-                jwks = this.jwkSource.get(jwkSelector, null);
-            }
+            JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
+            jwks = this.jwkSource.get(jwkSelector, null);
         } catch (KeySourceException e) {
             throw new JOSERuntimeException("Failed to select jwk." + e.getMessage(), e);
         }

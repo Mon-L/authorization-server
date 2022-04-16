@@ -67,7 +67,7 @@ public class DefaultJWTSignerTest {
     }
 
     @Test
-    public void testWhenSelectEmptyJWKThenJWKException() throws Exception {
+    public void testWhenSelectEmptyJWKThenJWKException() {
         this.jwkSource = mock(JWKSource.class);
         this.jwtSigner = new DefaultJWTSigner(this.jwkSource);
 

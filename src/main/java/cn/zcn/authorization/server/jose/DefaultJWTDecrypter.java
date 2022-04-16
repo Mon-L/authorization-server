@@ -16,7 +16,11 @@ import java.util.List;
 
 public class DefaultJWTDecrypter implements JWTDecrypter {
 
+    /**
+     * 解密需要使用的私钥集合
+     */
     private final JWKSource<SecurityContext> jwkSource;
+
     private final JWEDecrypterFactory jweDecrypterFactory;
 
     public DefaultJWTDecrypter(JWKSource<SecurityContext> jwkSource) {
@@ -57,15 +61,12 @@ public class DefaultJWTDecrypter implements JWTDecrypter {
     }
 
     private JWK selectJWK(JWEHeader header) {
-        List<JWK> jwks = null;
+        List<JWK> jwks;
 
         try {
             JWKMatcher jwkMatcher = JWKMatcher.forJWEHeader(header);
-
-            if (jwkMatcher != null) {
-                JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
-                jwks = this.jwkSource.get(jwkSelector, null);
-            }
+            JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
+            jwks = this.jwkSource.get(jwkSelector, null);
         } catch (KeySourceException e) {
             throw new JOSERuntimeException("Failed to select jwk " + e.getMessage(), e);
         }

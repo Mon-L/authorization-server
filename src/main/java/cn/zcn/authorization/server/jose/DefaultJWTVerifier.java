@@ -17,6 +17,10 @@ import java.util.List;
 public class DefaultJWTVerifier implements JWTVerifier {
 
     private final JWSVerifierFactory jwsVerifierFactory;
+
+    /**
+     * 验签所需的公钥集合
+     */
     private final JWKSource<SecurityContext> jwkSource;
 
     public DefaultJWTVerifier(JWKSource<SecurityContext> jwkSource) {
@@ -26,7 +30,7 @@ public class DefaultJWTVerifier implements JWTVerifier {
     public DefaultJWTVerifier(JWKSource<SecurityContext> jwkSource, Provider provider) {
         Assert.notNull(jwkSource, "jwkSource must not be null");
         Assert.notNull(provider, "provider must not be null");
-        
+
         this.jwkSource = jwkSource;
         this.jwsVerifierFactory = new DefaultJWSVerifierFactory();
         this.jwsVerifierFactory.getJCAContext().setProvider(provider);
@@ -53,15 +57,12 @@ public class DefaultJWTVerifier implements JWTVerifier {
     }
 
     private JWK selectJWK(JWSHeader header) {
-        List<JWK> jwks = null;
+        List<JWK> jwks;
 
         try {
             JWKMatcher jwkMatcher = JWKMatcher.forJWSHeader(header);
-
-            if (jwkMatcher != null) {
-                JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
-                jwks = this.jwkSource.get(jwkSelector, null);
-            }
+            JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
+            jwks = this.jwkSource.get(jwkSelector, null);
         } catch (KeySourceException e) {
             throw new JOSERuntimeException("Failed to select jwk " + e.getMessage(), e);
         }
