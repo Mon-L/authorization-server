@@ -16,8 +16,8 @@ public class ClientSecretPostExtractor implements AuthenticationExtractor {
 
     @Override
     public Authentication extract(HttpServletRequest request) throws AuthenticationException {
-        String clientId = request.getParameter(OAuth2Constants.CLIENT_ID);
-        String clientSecret = request.getParameter(OAuth2Constants.CLIENT_SECRET);
+        String clientId = request.getParameter(OAuth2Constants.FIELD.CLIENT_ID);
+        String clientSecret = request.getParameter(OAuth2Constants.FIELD.CLIENT_SECRET);
 
         if (clientSecret == null) {
             clientSecret = "";
@@ -37,7 +37,7 @@ public class ClientSecretPostExtractor implements AuthenticationExtractor {
 
         @Override
         public boolean matches(HttpServletRequest request) {
-            String clientId = request.getParameter(OAuth2Constants.CLIENT_ID);
+            String clientId = request.getParameter(OAuth2Constants.FIELD.CLIENT_ID);
 
             return !Strings.isNullOrEmpty(clientId);
         }

@@ -54,6 +54,11 @@ public class ServerSecurityConfigurer {
         return this;
     }
 
+    public ServerSecurityConfigurer jose(Customizer<JOSEConfigurer> configurer){
+        configurer.customize(getConfigurer(JOSEConfigurer.class));
+        return this;
+    }
+
     public ServerSecurityConfigurer authorizationEndpoint(Customizer<AuthorizationEndpointConfigurer> configurer) {
         configurer.customize(getConfigurer(AuthorizationEndpointConfigurer.class));
         return this;
@@ -80,6 +85,7 @@ public class ServerSecurityConfigurer {
         Map<Class<? extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>>,
                 SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>> configurers = new LinkedHashMap<>();
 
+        configurers.put(JOSEConfigurer.class, new JOSEConfigurer());
         configurers.put(ClientAuthenticationConfigurer.class, new ClientAuthenticationConfigurer());
         configurers.put(AuthorizationEndpointConfigurer.class, new AuthorizationEndpointConfigurer());
         configurers.put(TokenEndpointConfigurer.class, new TokenEndpointConfigurer());

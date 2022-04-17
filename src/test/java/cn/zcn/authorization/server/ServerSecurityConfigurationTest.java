@@ -2,10 +2,7 @@ package cn.zcn.authorization.server;
 
 import cn.zcn.authorization.server.configuration.EnableAuthorizationServer;
 import cn.zcn.authorization.server.configuration.ServerSecurityConfigurationAdapter;
-import cn.zcn.authorization.server.configurer.AuthorizationEndpointConfigurer;
-import cn.zcn.authorization.server.configurer.ClientAuthenticationConfigurer;
-import cn.zcn.authorization.server.configurer.ServerSecurityConfigurer;
-import cn.zcn.authorization.server.configurer.TokenEndpointConfigurer;
+import cn.zcn.authorization.server.configurer.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,12 @@ public class ServerSecurityConfigurationTest {
 
                 serverSecurityConfigurer
                         .clientService(clientService())
+                        .jose(new Customizer<JOSEConfigurer>() {
+                            @Override
+                            public void customize(JOSEConfigurer configurer) {
+                                
+                            }
+                        })
                         .clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
                             @Override
                             public void customize(ClientAuthenticationConfigurer configurer) {

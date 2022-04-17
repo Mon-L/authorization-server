@@ -26,7 +26,7 @@ public class ClientSecretBasicExtractor implements AuthenticationExtractor {
 
     @Override
     public Authentication extract(HttpServletRequest request) throws AuthenticationException {
-        String basicAuthorization = request.getHeader(OAuth2Constants.AUTHORIZATION);
+        String basicAuthorization = request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION);
 
         String clientId;
         String clientSecret;
@@ -75,7 +75,7 @@ public class ClientSecretBasicExtractor implements AuthenticationExtractor {
 
         @Override
         public boolean matches(HttpServletRequest request) {
-            String basicAuthorization = request.getHeader(OAuth2Constants.AUTHORIZATION);
+            String basicAuthorization = request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION);
 
             return basicAuthorization != null && basicAuthorization.toLowerCase().startsWith(BASIC);
         }

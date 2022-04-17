@@ -27,7 +27,7 @@ public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
         String username = tokenRequest.getRequestParameters().get("username");
         String password = tokenRequest.getRequestParameters().get("password");
 
-        tokenRequest.removeRequestParameter("password");
+        tokenRequest.getRequestParameters().remove("password");
 
         Authentication userAuth = new UsernamePasswordAuthenticationToken(username, password);
         ((AbstractAuthenticationToken) userAuth).setDetails(tokenRequest.getRequestParameters());

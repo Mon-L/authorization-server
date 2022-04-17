@@ -23,8 +23,8 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
     @Override
     protected AccessToken doGrant(Client client, TokenRequest tokenRequest) throws OAuth2Exception {
         Map<String, String> parameters = tokenRequest.getRequestParameters();
-        String authorizationCode = parameters.get(OAuth2Constants.CODE);
-        String redirectUri = parameters.get(OAuth2Constants.REDIRECT_URI);
+        String authorizationCode = parameters.get(OAuth2Constants.FIELD.CODE);
+        String redirectUri = parameters.get(OAuth2Constants.FIELD.REDIRECT_URI);
 
         if (authorizationCode == null) {
             throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An authorization code must be supplied.");

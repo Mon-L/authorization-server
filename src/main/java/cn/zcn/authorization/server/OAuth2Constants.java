@@ -2,75 +2,90 @@ package cn.zcn.authorization.server;
 
 public interface OAuth2Constants {
 
-    String CLIENT_ID = "client_id";
-    String CLIENT_SECRET = "client_secret";
-    String GRANT_TYPE = "grant_type";
-    String CODE = "code";
-    String RESPONSE_TYPE = "response_type";
-    String REDIRECT_URI = "redirect_uri";
-    String STATE = "state";
-    String DISPLAY = "display";
-    String REQUEST = "request";
-    String LOGIN_HINT = "login_hint";
-    String MAX_AGE = "max_age";
-    String CLAIMS = "claims";
-    String SCOPE = "scope";
-    String NONCE = "nonce";
-    String PROMPT = "prompt";
-    String ACR = "acr";
-    String REFRESH_TOKEN = "refresh_token";
-    String CLIENT_ASSERTION_TYPE = "client_assertion_type";
-    String CLIENT_ASSERTION = "client_assertion";
-    String RESPONSE_MODE = "response_mode";
-    String TOKEN = "token";
+    final class GRANT_TYPE{
+        public static final String AUTHORIZATION_CODE = "authorization_code";
+        public static final String IMPLICIT = "implicit";
+        public static final String CLIENT_CREDENTIALS = "client_credentials";
+        public static final String PASSWORD = "password";
+    }
 
+    final class ERROR{
+        public static final String ERROR = "error";
+        public static final String ERROR_DESCRIPTION = "error_description";
+        public static final String ERROR_URI = "error_uri";
+    }
 
-    // audience
-    String AUD = "aud";
+    final class PKCE{
+        public static final String CODE_CHALLENGE = "code_challenge";
+        public static final  String CODE_CHALLENGE_METHOD = "code_challenge_method";
+        public static final String CODE_VERIFIER = "code_verifier";
+    }
 
-    // prompt values
-    String PROMPT_LOGIN = "login";
-    String PROMPT_NONE = "none";
-    String PROMPT_CONSENT = "consent";
-    String PROMPT_SEPARATOR = " ";
+    final class FIELD{
+        public static final String CLIENT_ID = "client_id";
+        public static final String CLIENT_SECRET = "client_secret";
+        public static final String GRANT_TYPE = "grant_type";
+        public static final String CODE = "code";
+        public static final String RESPONSE_TYPE = "response_type";
+        public static final String REDIRECT_URI = "redirect_uri";
+        public static final String STATE = "state";
+        public static final String DISPLAY = "display";
+        public static final String REQUEST = "request";
+        public static final String LOGIN_HINT = "login_hint";
+        public static final String MAX_AGE = "max_age";
+        public static final String CLAIMS = "claims";
+        public static final String SCOPE = "scope";
+        public static final String NONCE = "nonce";
+        public static final String PROMPT = "prompt";
+        public static final String ACR = "acr";
+        public static final String REFRESH_TOKEN = "refresh_token";
+        public static final String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+        public static final String CLIENT_ASSERTION = "client_assertion";
+        public static final String RESPONSE_MODE = "response_mode";
+        public static final String TOKEN = "token";
 
-    // extensions
-    String APPROVED_SITE = "approved_site";
+        // audience
+        public static final String AUD = "aud";
 
-    // PKCE
-    String CODE_CHALLENGE = "code_challenge";
-    String CODE_CHALLENGE_METHOD = "code_challenge_method";
-    String CODE_VERIFIER = "code_verifier";
+        // prompt values
+        public static final String PROMPT_LOGIN = "login";
+        public static final String PROMPT_NONE = "none";
+        public static final String PROMPT_CONSENT = "consent";
+        public static final String PROMPT_SEPARATOR = " ";
 
-    String ID_TOKEN = "id_token";
+        // extensions
+        public static final  String APPROVED_SITE = "approved_site";
 
-    //MTLS
-    String X509CERTIFICATE_THUMBPRINT = "x-x509-x5tS256";
+        public static final String ID_TOKEN = "id_token";
 
-    //oauth response
-    String ACCESS_TOKEN = "access_token";
-    String TOKEN_TYPE = "token_type";
-    String EXPIRES_IN = "expires_in";
-    String R_EXPIRES_IN = "r_expires_in";
+        //MTLS
+        public static final String X509CERTIFICATE_THUMBPRINT = "x-x509-x5tS256";
 
-    String AUTHORIZATION = "Authorization";
+        //oauth response
+        public static final String ACCESS_TOKEN = "access_token";
+        public static final String TOKEN_TYPE = "token_type";
+        public static final String EXPIRES_IN = "expires_in";
+        public static final String R_EXPIRES_IN = "r_expires_in";
 
-    // introspection
-    String ISS = "iss";
-    String IAT = "iat";
-    String SUB = "sub";
-    String USERNAME = "username";
-    String EXP = "exp";
-    String EXPIRES_AT = "expires_at";
-    String SCOPE_SEPARATOR = " ";
-    String ACTIVE = "active";
-    String CNF = "cnf";
-    String X5T_S256 = "x5t#S256";
+        public static final String AUTHORIZATION = "Authorization";
 
-    String ACCESS_TOKEN_TYPE = "access_token_type";
-    String BEARER_TYPE = "Bearer";
+        // introspection
+        public static final String ISS = "iss";
+        public static final String IAT = "iat";
+        public static final String SUB = "sub";
+        public static final String USERNAME = "username";
+        public static final String EXP = "exp";
+        public static final String EXPIRES_AT = "expires_at";
+        public static final String SCOPE_SEPARATOR = " ";
+        public static final String ACTIVE = "active";
+        public static final String CNF = "cnf";
+        public static final String X5T_S256 = "x5t#S256";
 
-    // user approval
-    String USER_OAUTH_APPROVAL = "user_oauth_approval";
-    String SCOPE_PREFIX = "scope.";
+        public static final String ACCESS_TOKEN_TYPE = "access_token_type";
+        public static final String BEARER_TYPE = "Bearer";
+
+        // user approval
+        public static final String USER_OAUTH_APPROVAL = "user_oauth_approval";
+        public static final String SCOPE_PREFIX = "scope.";
+    }
 }

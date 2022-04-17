@@ -21,8 +21,8 @@ public class ClientSecretPostExtractorTest {
 
     @Test
     public void testExtractWhenSuccess() {
-        Mockito.when(request.getParameter(OAuth2Constants.CLIENT_ID)).thenReturn("client");
-        Mockito.when(request.getParameter(OAuth2Constants.CLIENT_SECRET)).thenReturn("123");
+        Mockito.when(request.getParameter(OAuth2Constants.FIELD.CLIENT_ID)).thenReturn("client");
+        Mockito.when(request.getParameter(OAuth2Constants.FIELD.CLIENT_SECRET)).thenReturn("123");
 
         ClientSecretPostExtractor extractor = new ClientSecretPostExtractor();
         Authentication auth = extractor.extract(request);
@@ -35,8 +35,8 @@ public class ClientSecretPostExtractorTest {
 
     @Test
     public void testExtractUsingEmptyClientSecret() {
-        Mockito.when(request.getParameter(OAuth2Constants.CLIENT_ID)).thenReturn("client");
-        Mockito.when(request.getParameter(OAuth2Constants.CLIENT_SECRET)).thenReturn(null);
+        Mockito.when(request.getParameter(OAuth2Constants.FIELD.CLIENT_ID)).thenReturn("client");
+        Mockito.when(request.getParameter(OAuth2Constants.FIELD.CLIENT_SECRET)).thenReturn(null);
 
         ClientSecretPostExtractor extractor = new ClientSecretPostExtractor();
         Authentication auth = extractor.extract(request);
@@ -49,7 +49,7 @@ public class ClientSecretPostExtractorTest {
 
     @Test
     public void testRequestMatcherWhenMatched() {
-        Mockito.when(request.getParameter(OAuth2Constants.CLIENT_ID)).thenReturn("client");
+        Mockito.when(request.getParameter(OAuth2Constants.FIELD.CLIENT_ID)).thenReturn("client");
 
         ClientSecretPostExtractor extractor = new ClientSecretPostExtractor();
         RequestMatcher requestMatcher = extractor.getRequestMatcher();

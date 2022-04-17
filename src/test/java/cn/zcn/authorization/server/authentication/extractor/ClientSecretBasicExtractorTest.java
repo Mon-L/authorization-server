@@ -25,7 +25,7 @@ public class ClientSecretBasicExtractorTest {
     @Test
     public void testExtractWhenSuccess() {
         String data = encode("client", "123", ":");
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("basic " + data);
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("basic " + data);
 
         ClientSecretBasicExtractor extractor = new ClientSecretBasicExtractor();
         Authentication auth = extractor.extract(request);
@@ -38,7 +38,7 @@ public class ClientSecretBasicExtractorTest {
 
     @Test
     public void testExtractUsingInvalidAuthentication() {
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("iii*iii");
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("iii*iii");
 
         ClientSecretBasicExtractor extractor = new ClientSecretBasicExtractor();
         Assertions.assertThrows(BadCredentialsException.class, () -> extractor.extract(request));
@@ -47,7 +47,7 @@ public class ClientSecretBasicExtractorTest {
     @Test
     public void testExtractUsingInvalidAuthentication2() {
         String data = encode("client", "123", "|");
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn(data);
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn(data);
 
         ClientSecretBasicExtractor extractor = new ClientSecretBasicExtractor();
         Assertions.assertThrows(BadCredentialsException.class, () -> extractor.extract(request));
@@ -59,7 +59,7 @@ public class ClientSecretBasicExtractorTest {
         RequestMatcher requestMatcher = extractor.getRequestMatcher();
 
         String data = encode("client", "123", ":");
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("basic " + data);
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("basic " + data);
 
         Assertions.assertTrue(requestMatcher.matches(request));
     }
@@ -69,16 +69,16 @@ public class ClientSecretBasicExtractorTest {
         ClientSecretBasicExtractor extractor = new ClientSecretBasicExtractor();
         RequestMatcher requestMatcher = extractor.getRequestMatcher();
 
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn(null);
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn(null);
         Assertions.assertFalse(requestMatcher.matches(request));
 
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("");
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("");
         Assertions.assertFalse(requestMatcher.matches(request));
-        
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("basic 123");
+
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("basic 123");
         Assertions.assertTrue(requestMatcher.matches(request));
 
-        Mockito.when(request.getHeader(OAuth2Constants.AUTHORIZATION)).thenReturn("123");
+        Mockito.when(request.getHeader(OAuth2Constants.FIELD.AUTHORIZATION)).thenReturn("123");
         Assertions.assertFalse(requestMatcher.matches(request));
     }
 

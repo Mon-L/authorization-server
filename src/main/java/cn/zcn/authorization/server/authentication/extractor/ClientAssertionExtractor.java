@@ -27,7 +27,7 @@ public class ClientAssertionExtractor implements AuthenticationExtractor {
 
     @Override
     public Authentication extract(HttpServletRequest request) throws AuthenticationException {
-        String assertion = request.getParameter(OAuth2Constants.CLIENT_ASSERTION);
+        String assertion = request.getParameter(OAuth2Constants.FIELD.CLIENT_ASSERTION);
 
         JWT jwt;
 
@@ -51,8 +51,8 @@ public class ClientAssertionExtractor implements AuthenticationExtractor {
 
         @Override
         public boolean matches(HttpServletRequest request) {
-            String assertionType = request.getParameter(OAuth2Constants.CLIENT_ASSERTION_TYPE);
-            String assertion = request.getParameter(OAuth2Constants.CLIENT_ASSERTION);
+            String assertionType = request.getParameter(OAuth2Constants.FIELD.CLIENT_ASSERTION_TYPE);
+            String assertion = request.getParameter(OAuth2Constants.FIELD.CLIENT_ASSERTION);
 
             return !Strings.isNullOrEmpty(assertionType) && !Strings.isNullOrEmpty(assertion) && assertionType.equals(ASSERTION_TYPE);
         }
