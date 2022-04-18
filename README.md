@@ -95,7 +95,7 @@ authorizationServerConfigurer
   	.useAuthenticationManager(...)
     	.tokneSevice(...) //必需
   	.requestResolver(...)
-  	.tokenGranter(...)
+  	.tokenGranter(...);
 ```
 
 ### JOSEConfigurer
@@ -120,10 +120,10 @@ authorizationServerConfigurer
 authorizationServerConfigurer.jose(new Customizer<JOSEConfigurer>() {
   @Override
   public void customize(JOSEConfigurer configurer) {
-		configurer
-      .jwkSource(...)
-      .jwtDecrypter(...)
-      .jwtSigner(...);
+	configurer
+	  .jwkSource(...)
+	  .jwtDecrypter(...)
+	  .jwtSigner(...);
   }
 })
 ```
@@ -148,7 +148,8 @@ authorizationServerConfigurer.jose(new Customizer<JOSEConfigurer>() {
 authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
     @Override
     public void customize(ClientAuthenticationConfigurer configurer) {
-      configurer.allowedClientAuthMethods(...)
+      configurer
+      	.allowedClientAuthMethods(...)
         .authenticationFailureHandler(...)
         .authenticationSuccessHandler(...);
     }
@@ -171,9 +172,9 @@ authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenti
 authorizationServerConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {
   @Override
   public void customize(AuthorizationEndpointConfigurer configurer) {
-			configurer
-        .approvalService(...)
-        .authorizationCodeService(...)
+	configurer
+          .approvalService(...)
+          .authorizationCodeService(...);
   }
 });
 ```
