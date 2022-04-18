@@ -9,7 +9,7 @@ import cn.zcn.authorization.server.authentication.extractor.ClientSecretBasicExt
 import cn.zcn.authorization.server.authentication.extractor.ClientSecretPostExtractor;
 import cn.zcn.authorization.server.authentication.provider.ClientSecretAuthenticationProvider;
 import cn.zcn.authorization.server.authentication.provider.JWTAssertionAuthenticationProvider;
-import cn.zcn.authorization.server.exception.OAuth2ExceptionWriter;
+import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.filter.ClientAuthenticationFilter;
 import com.google.common.collect.Sets;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 客户端身份验证配置。用于配置客户端身份校验的策略。
- * 该配置类会往 {@link HttpSecurity} 中添加一个 {@link ClientAuthenticationFilter}，用于拦截需要客户端身份校验的端点。
+ * 客户端身份验证配置类。用于配置客户端身份校验的策略。
+ * 该配置类会往{@link HttpSecurity}中添加一个{@link ClientAuthenticationFilter}，用于拦截需要客户端身份校验的端点。
  */
 public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
@@ -59,7 +59,7 @@ public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<De
     public void init(HttpSecurity builder) throws Exception {
         ClientService clientService = builder.getSharedObject(ClientService.class);
         ServerConfig serverConfig = builder.getSharedObject(ServerConfig.class);
-        OAuth2ExceptionWriter exceptionWriter = builder.getSharedObject(OAuth2ExceptionWriter.class);
+        ExceptionWriter exceptionWriter = builder.getSharedObject(ExceptionWriter.class);
 
         this.requestMatcher = new OrRequestMatcher(
                 new AntPathRequestMatcher(serverConfig.getTokenEndpoint()),
@@ -119,7 +119,7 @@ public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<De
                 authenticationSuccessHandler, authenticationFailureHandler
         );
 
-        //添加客户端验证的filter
+        //添加客户端验证的 filter 到 HttpSecurity
         builder.addFilterAfter(postProcess(filter), AbstractPreAuthenticatedProcessingFilter.class);
     }
 

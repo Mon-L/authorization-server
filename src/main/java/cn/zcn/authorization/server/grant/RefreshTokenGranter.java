@@ -10,16 +10,16 @@ import org.springframework.util.StringUtils;
  */
 public class RefreshTokenGranter extends BaseTokenGranter {
 
-    public RefreshTokenGranter(String supportedGrantType, TokenService tokenService) {
-        super(supportedGrantType, tokenService);
+    public RefreshTokenGranter(TokenService tokenService) {
+        super(OAuth2Constants.GRANT_TYPE.REFRESH_TOKEN, tokenService);
     }
 
     @Override
     public AccessToken doGrant(Client client, TokenRequest tokenRequest) {
-        String refreshToken = tokenRequest.getRequestParameters().get("refresh_token");
+        String refreshToken = tokenRequest.getRequestParameters().get(OAuth2Constants.FIELD.REFRESH_TOKEN);
 
         if (!StringUtils.hasText(refreshToken)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "refresh_token must not be null");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An refresh token must be supplied.");
         }
 
         OAuth2Authentication oauth2Authentication = tokenService.loadAuthenticationWithRefreshToken(refreshToken);

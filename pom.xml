@@ -11,7 +11,7 @@
 
     <groupId>cn.zcn</groupId>
     <artifactId>authorization-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>authorization-server</name>
     <description>project for authorization server</description>
 

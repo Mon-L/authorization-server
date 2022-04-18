@@ -16,7 +16,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class AuthorizationEndpoint {
     private AuthorizationCodeService authorizationCodeService;
 
     @RequestMapping(value = ServerConfig.AUTHORIZATION_ENDPOINT, method = RequestMethod.GET)
-    public ModelAndView authorize(@RequestParam Map<String, String> parameters, Principal principal, HttpServletResponse response) {
+    public ModelAndView authorize(@RequestParam Map<String, String> parameters, Principal principal) {
         if (!(principal instanceof Authentication) || !((Authentication) principal).isAuthenticated()) {
             throw new InsufficientAuthenticationException("No login user!");
         }
@@ -43,7 +42,7 @@ public class AuthorizationEndpoint {
         AuthorizationRequest authorizationRequest = requestResolver.resolve2AuthorizationRequest(parameters);
         Client client = clientService.loadClientByClientId(authorizationRequest.getClientId());
 
-        //resolve redirect uri
+        //validate redirect uri
         validateRedirectUri(authorizationRequest.getRedirectUri(), client.getRedirectUris());
 
         //validate scope
@@ -56,7 +55,7 @@ public class AuthorizationEndpoint {
         }
 
         //check supported response type
-        String responseType = OAuth2Utils.joinResponseType(authorizationRequest.getResponseType());
+        String responseType = OAuth2Utils.joinParameterString(authorizationRequest.getResponseType());
         if (!client.getResponseTypes().contains(responseType)) {
             throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported response type : " + responseType);
         }
@@ -85,7 +84,7 @@ public class AuthorizationEndpoint {
             }
         }
 
-        return approvalService.redirectForApproval(client, authorizationRequest);
+        return approvalService.redirectForUserApproval(client, authorizationRequest);
     }
 
     @RequestMapping(value = ServerConfig.AUTHORIZATION_ENDPOINT, method = RequestMethod.POST, params = OAuth2Constants.FIELD.USER_OAUTH_APPROVAL)
@@ -162,7 +161,7 @@ public class AuthorizationEndpoint {
             }
 
             if (!accessToken.getScope().isEmpty()) {
-                response.put(OAuth2Constants.FIELD.SCOPE, OAuth2Utils.joinScope(accessToken.getScope()));
+                response.put(OAuth2Constants.FIELD.SCOPE, OAuth2Utils.joinParameterString(accessToken.getScope()));
             }
 
             return new RedirectView(buildSuccessfulRedirectUrl(authorizationRequest, response, true), false, true, false);
@@ -205,7 +204,7 @@ public class AuthorizationEndpoint {
 
     /**
      * 校验授权请求中 redirect uri 参数，是否与客户端已注册的 redirect uris 中的一个匹配
-     * 注意客户端 redirect uris 可能是已编码的格式，而授权请求中的 redirect uris 是未编码的。
+     * 注意客户端 redirect uris 可能是已编码的格式。
      *
      * @param requestedRedirectUri 授权请求中 redirect uri
      * @param clientRegisterUris   客户端注册的 redirect uris

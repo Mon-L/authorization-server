@@ -20,14 +20,17 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DefaultOAuth2ExceptionWriter implements OAuth2ExceptionWriter {
+/**
+ * 默认的 Exception 处理类
+ */
+public class DefaultExceptionWriter implements ExceptionWriter {
 
     private static final boolean jackson2Present;
     private static final boolean gsonPresent;
     private static final boolean jsonbPresent;
 
     static {
-        ClassLoader classLoader = DefaultOAuth2ExceptionWriter.class.getClassLoader();
+        ClassLoader classLoader = DefaultExceptionWriter.class.getClassLoader();
 
         jackson2Present = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)
                 && ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);

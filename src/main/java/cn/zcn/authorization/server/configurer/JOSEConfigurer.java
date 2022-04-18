@@ -16,17 +16,17 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import java.util.List;
 
 /**
- * 授权服务 JOSE 相关配置
+ * 授权服务 JOSE 相关配置。用于配置签名、解密的配置
  */
 public class JOSEConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     /**
-     * 用于授权服务加签、解密的密钥集合
+     * 用于授权服务签名、解密的密钥集合
      */
     private JWKSource<SecurityContext> jwkSource = new EmptyJwkSource();
 
     /**
-     * 用于授权服务加签（如 id token 加签等）
+     * 用于授权服务签名（如 id token 签名等）
      */
     private JWTSigner jwtSigner;
 

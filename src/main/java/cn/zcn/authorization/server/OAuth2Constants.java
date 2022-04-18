@@ -2,26 +2,27 @@ package cn.zcn.authorization.server;
 
 public interface OAuth2Constants {
 
-    final class GRANT_TYPE{
+    final class GRANT_TYPE {
         public static final String AUTHORIZATION_CODE = "authorization_code";
         public static final String IMPLICIT = "implicit";
         public static final String CLIENT_CREDENTIALS = "client_credentials";
         public static final String PASSWORD = "password";
+        public static final String REFRESH_TOKEN = "refresh_token";
     }
 
-    final class ERROR{
+    final class ERROR {
         public static final String ERROR = "error";
         public static final String ERROR_DESCRIPTION = "error_description";
         public static final String ERROR_URI = "error_uri";
     }
 
-    final class PKCE{
+    final class PKCE {
         public static final String CODE_CHALLENGE = "code_challenge";
-        public static final  String CODE_CHALLENGE_METHOD = "code_challenge_method";
+        public static final String CODE_CHALLENGE_METHOD = "code_challenge_method";
         public static final String CODE_VERIFIER = "code_verifier";
     }
 
-    final class FIELD{
+    final class FIELD {
         public static final String CLIENT_ID = "client_id";
         public static final String CLIENT_SECRET = "client_secret";
         public static final String GRANT_TYPE = "grant_type";
@@ -54,7 +55,7 @@ public interface OAuth2Constants {
         public static final String PROMPT_SEPARATOR = " ";
 
         // extensions
-        public static final  String APPROVED_SITE = "approved_site";
+        public static final String APPROVED_SITE = "approved_site";
 
         public static final String ID_TOKEN = "id_token";
 
@@ -86,6 +87,5 @@ public interface OAuth2Constants {
 
         // user approval
         public static final String USER_OAUTH_APPROVAL = "user_oauth_approval";
-        public static final String SCOPE_PREFIX = "scope.";
     }
 }

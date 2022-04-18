@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class ClientCredentialsTokenGranter extends BaseTokenGranter {
 
     public ClientCredentialsTokenGranter(TokenService tokenService) {
-        super("client_credentials", tokenService);
+        super(OAuth2Constants.GRANT_TYPE.CLIENT_CREDENTIALS, tokenService);
     }
 
     @Override
@@ -23,6 +23,6 @@ public class ClientCredentialsTokenGranter extends BaseTokenGranter {
             throw new InsufficientAuthenticationException("No client authentication present.");
         }
 
-        return tokenService.issueTokenWithClient(client, new OAuth2Authentication(tokenRequest, authentication));
+        return tokenService.issueTokenBoundClient(client, new OAuth2Authentication(tokenRequest, authentication));
     }
 }

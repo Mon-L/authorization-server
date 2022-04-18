@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class ImplicitTokenGranter extends BaseTokenGranter {
 
     public ImplicitTokenGranter(TokenService tokenService) {
-        super("implicit", tokenService);
+        super(OAuth2Constants.GRANT_TYPE.IMPLICIT, tokenService);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ImplicitTokenGranter extends BaseTokenGranter {
             throw new InsufficientAuthenticationException("No user authentication present.");
         }
 
-        return tokenService.issueTokenWithClient(client, new OAuth2Authentication(tokenRequest, userAuthentication));
+        return tokenService.issueTokenBoundClient(client, new OAuth2Authentication(tokenRequest, userAuthentication));
     }
 }
 

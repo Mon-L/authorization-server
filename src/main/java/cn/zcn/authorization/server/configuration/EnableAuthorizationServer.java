@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ServerSecurityConfiguration.class})
+@Import({AuthorizationServerConfiguration.class})
 public @interface EnableAuthorizationServer {
 }

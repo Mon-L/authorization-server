@@ -5,14 +5,15 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class OAuth2Utils {
-    public static String joinScope(Set<String> scope) {
+    public static String joinParameterString(Set<String> scope) {
         StringJoiner joiner = new StringJoiner(" ");
         for (String s : scope) {
             joiner.add(s);
@@ -20,12 +21,13 @@ public class OAuth2Utils {
         return joiner.toString();
     }
 
-    public static String joinResponseType(Set<String> responseTypes) {
-        StringJoiner joiner = new StringJoiner(" ");
-        for (String s : responseTypes) {
-            joiner.add(s);
+    public static Set<String> parseParameterList(String values) {
+        Set<String> result = new TreeSet<>();
+        if (values != null && values.trim().length() > 0) {
+            String[] tokens = values.split("[\\s+]");
+            result.addAll(Arrays.asList(tokens));
         }
-        return joiner.toString();
+        return result;
     }
 
     /**
@@ -86,12 +88,11 @@ public class OAuth2Utils {
     }
 
     /**
-     * 当无法解析 protocol 时，直接判断两个 URL 是否相等。
-     * 否则判断是否满足以下所有条件
+     * 当无法解析 URL 的 protocol 时，判断两个 URL 是否相等。否则判断两个 URL 是否满足以下所有条件
      * 1. protocol 相等。
-     * 2. host 相等
-     * 3. port 相等
-     * 4. registerURL 的 path 与 requestURL 的 path 相等
+     * 2. host 相等。
+     * 3. port 相等。
+     * 4. registerURL 的 path 与 requestURL 的 path 相等。
      *
      * @param requestURL
      * @param registerURL

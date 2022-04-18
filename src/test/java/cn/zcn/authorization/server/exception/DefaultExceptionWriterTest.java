@@ -15,15 +15,15 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 
-public class DefaultOAuth2ExceptionWriterTest {
+public class DefaultExceptionWriterTest {
 
-    private OAuth2ExceptionWriter oAuth2ExceptionWriter;
+    private ExceptionWriter exceptionWriter;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
 
     @BeforeEach
     public void beforeEach() {
-        this.oAuth2ExceptionWriter = Mockito.spy(new DefaultOAuth2ExceptionWriter());
+        this.exceptionWriter = Mockito.spy(new DefaultExceptionWriter());
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
     }
@@ -38,7 +38,7 @@ public class DefaultOAuth2ExceptionWriterTest {
     public void testWriteUsingException() throws IOException {
         Exception exception = new Exception("foo");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 
@@ -52,7 +52,7 @@ public class DefaultOAuth2ExceptionWriterTest {
     public void testWriteUsingRuntimeException() throws IOException {
         RuntimeException exception = new RuntimeException("foo");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 
@@ -65,7 +65,7 @@ public class DefaultOAuth2ExceptionWriterTest {
     public void testWriteUsingAuthenticationException() throws IOException {
         BadCredentialsException exception = new BadCredentialsException("foo");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 
@@ -78,7 +78,7 @@ public class DefaultOAuth2ExceptionWriterTest {
     public void testWriteUsingAccessDeniedException() throws IOException {
         AccessDeniedException exception = new AccessDeniedException("foo");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 
@@ -91,7 +91,7 @@ public class DefaultOAuth2ExceptionWriterTest {
     public void testWriteUsingOAuth2Exception() throws IOException {
         OAuth2Exception exception = new OAuth2Exception("foo", "bar");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 
@@ -105,7 +105,7 @@ public class DefaultOAuth2ExceptionWriterTest {
         OAuth2Exception exception = new OAuth2Exception("foo", "bar");
         exception.errorUri("url");
 
-        oAuth2ExceptionWriter.write(exception, new ServletWebRequest(request, response));
+        exceptionWriter.write(exception, new ServletWebRequest(request, response));
 
         JsonNode node = toJson(response.getContentAsByteArray());
 

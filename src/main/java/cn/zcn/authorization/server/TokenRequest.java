@@ -8,10 +8,11 @@ public class TokenRequest {
     private final String clientId;
     private final String grantType;
     private final Map<String, String> requestParameters;
-    private final Set<String> scope;
+
+    private Set<String> scope;
 
     /**
-     * 授权请求参数，该参数可为空。只有授权码模式、简化模式下才有该参数
+     * 授权请求，该属性可为空。只有授权码模式、简化模式下才有该属性
      */
     private AuthorizationRequest authorizationRequest;
 
@@ -34,6 +35,9 @@ public class TokenRequest {
         this.authorizationRequest = authorizationRequest;
     }
 
+    /**
+     * 授权请求，该属性可为空。只有授权码模式、简化模式下才有该属性
+     */
     public AuthorizationRequest getAuthorizationRequest() {
         return authorizationRequest;
     }
@@ -48,6 +52,10 @@ public class TokenRequest {
 
     public Set<String> getScope() {
         return scope;
+    }
+
+    public void setScope(Set<String> scope) {
+        this.scope = scope;
     }
 
     public Map<String, String> getRequestParameters() {

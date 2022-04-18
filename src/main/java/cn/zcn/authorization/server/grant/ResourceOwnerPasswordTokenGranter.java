@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.util.StringUtils;
 
 /**
  * 处理密码模式中的令牌颁发
@@ -15,10 +16,13 @@ import org.springframework.security.core.AuthenticationException;
  */
 public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
 
+    /**
+     * 用户客户端授权的
+     */
     private final AuthenticationManager authenticationManager;
 
     public ResourceOwnerPasswordTokenGranter(TokenService tokenService, AuthenticationManager authenticationManager) {
-        super("password", tokenService);
+        super(OAuth2Constants.GRANT_TYPE.PASSWORD, tokenService);
         this.authenticationManager = authenticationManager;
     }
 
@@ -26,6 +30,10 @@ public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
     protected AccessToken doGrant(Client client, TokenRequest tokenRequest) throws OAuth2Exception {
         String username = tokenRequest.getRequestParameters().get("username");
         String password = tokenRequest.getRequestParameters().get("password");
+
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Username and password must be supplied.");
+        }
 
         tokenRequest.getRequestParameters().remove("password");
 
@@ -39,9 +47,9 @@ public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
         }
 
         if (userAuth == null || !userAuth.isAuthenticated()) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch username and password.");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between username and password.");
         }
 
-        return tokenService.issueTokenWithUser(client, new OAuth2Authentication(tokenRequest, userAuth));
+        return tokenService.issueTokenBoundUser(client, new OAuth2Authentication(tokenRequest, userAuth));
     }
 }

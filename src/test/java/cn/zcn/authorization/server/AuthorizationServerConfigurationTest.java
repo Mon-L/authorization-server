@@ -1,7 +1,7 @@
 package cn.zcn.authorization.server;
 
+import cn.zcn.authorization.server.configuration.AuthorizationServerConfigurationAdapter;
 import cn.zcn.authorization.server.configuration.EnableAuthorizationServer;
-import cn.zcn.authorization.server.configuration.ServerSecurityConfigurationAdapter;
 import cn.zcn.authorization.server.configurer.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ import org.springframework.web.util.ServletRequestPathUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
-@SpringBootTest(classes = ServerSecurityConfigurationTest.Boot.class)
-public class ServerSecurityConfigurationTest {
+@SpringBootTest(classes = AuthorizationServerConfigurationTest.Boot.class)
+public class AuthorizationServerConfigurationTest {
 
     @Autowired
     private RequestMappingHandlerMapping handlerMapping;
@@ -37,11 +37,11 @@ public class ServerSecurityConfigurationTest {
         }
 
         @EnableAuthorizationServer
-        private class ConfigurationTest extends ServerSecurityConfigurationAdapter {
+        private class AuthorizationServerConfiguration extends AuthorizationServerConfigurationAdapter {
             @Override
-            public void configure(ServerSecurityConfigurer serverSecurityConfigurer) {
+            public void configure(AuthorizationServerConfigurer authorizationServerConfigurer) {
 
-                serverSecurityConfigurer
+                authorizationServerConfigurer
                         .clientService(clientService())
                         .jose(new Customizer<JOSEConfigurer>() {
                             @Override
