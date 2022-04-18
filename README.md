@@ -36,7 +36,7 @@ private class OAuth2Configuration extends ServerSecurityConfigurationAdapter {
 
 # 自定义配置
 
-#### ServerSecurityConfigurer
+### ServerSecurityConfigurer
 
 * clientService
 
@@ -57,7 +57,7 @@ serverSecurityConfigurer
   	.exceptionWriter(...)
 ```
 
-####JOSEConfigurer
+### JOSEConfigurer
 
 用于配置加解密、加验签功能
 
@@ -84,7 +84,7 @@ serverSecurityConfigurer.jose(new Customizer<JOSEConfigurer>() {
 })
 ```
 
-####ClientAuthenticationConfigurer
+### ClientAuthenticationConfigurer
 
 用于自定义客户端授权功能。
 
@@ -111,7 +111,7 @@ serverSecurityConfigurer.clientAuthentication(new Customizer<ClientAuthenticatio
 })
 ```
 
-####AuthorizationEndpointConfigurer
+### AuthorizationEndpointConfigurer
 
 自定义配置授权码端点功能。
 
@@ -124,7 +124,7 @@ serverSecurityConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpo
 });
 ```
 
-####TokenEndpointConfigurer
+### TokenEndpointConfigurer
 
 自定义令牌端点功能。
 
