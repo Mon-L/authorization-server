@@ -4,6 +4,12 @@ import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.DefaultExceptionWriter;
 import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.grant.*;
+import cn.zcn.authorization.server.jose.*;
+import com.nimbusds.jose.KeySourceException;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSelector;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -16,6 +22,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +44,27 @@ public class AuthorizationServerConfigurer {
     private TokenService tokenService;
 
     /**
-     * 用于用户认证，当需要使用 password 模式当时候必须设置。
+     * 用于授权服务签名、解密的密钥集合
+     */
+    private JWKSource<SecurityContext> jwkSource = new EmptyJwkSource();
+
+    /**
+     * 用于授权服务签名，如 id token 签名等
+     */
+    private JWTSigner jwtSigner;
+
+    /**
+     * 用于授权服务解密，如 request object 解密等
+     */
+    private JWTDecrypter jwtDecrypter;
+
+    /**
+     * 用于验证客户端请求的签名以及加密发送给客户端的响应信息
+     */
+    private ClientJOSEService clientJOSEService;
+
+    /**
+     * 用于用户认证，当需要使用 password 模式的时候必须设置。
      */
     private AuthenticationManager userAuthenticationManager;
 
@@ -49,6 +76,18 @@ public class AuthorizationServerConfigurer {
         Assert.notNull(clientService, "ClientService must not be null.");
 
         // 配置缺省实现类
+        if (jwtSigner == null) {
+            jwtSigner = new DefaultJWTSigner(jwkSource);
+        }
+
+        if (jwtDecrypter == null) {
+            jwtDecrypter = new DefaultJWTDecrypter(jwkSource);
+        }
+
+        if (clientJOSEService == null) {
+            clientJOSEService = new DefaultClientJOSEService();
+        }
+
         if (requestResolver == null) {
             requestResolver = new DefaultRequestResolver();
         }
@@ -68,7 +107,10 @@ public class AuthorizationServerConfigurer {
             tokenGranter = compositeTokenGranter;
         }
 
-        //将需要共享的配置设置到 shared object 中
+        //将需要共享的配置添加到 shared object 中
+        builder.setSharedObject(JWTSigner.class, jwtSigner);
+        builder.setSharedObject(JWTDecrypter.class, jwtDecrypter);
+        builder.setSharedObject(ClientJOSEService.class, clientJOSEService);
         builder.setSharedObject(ClientService.class, clientService);
         builder.setSharedObject(ServerConfig.class, serverConfig);
         builder.setSharedObject(ExceptionWriter.class, exceptionWriter);
@@ -106,13 +148,28 @@ public class AuthorizationServerConfigurer {
         return this;
     }
 
-    public AuthorizationServerConfigurer userAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.userAuthenticationManager = userAuthenticationManager;
+    public AuthorizationServerConfigurer jwkSource(JWKSource<SecurityContext> jwkSource) {
+        this.jwkSource = jwkSource;
         return this;
     }
 
-    public AuthorizationServerConfigurer jose(Customizer<JOSEConfigurer> configurer) {
-        configurer.customize(getConfigurer(JOSEConfigurer.class));
+    public AuthorizationServerConfigurer jwtSigner(JWTSigner jwtSigner) {
+        this.jwtSigner = jwtSigner;
+        return this;
+    }
+
+    public AuthorizationServerConfigurer jwtDecrypter(JWTDecrypter jwtDecrypter) {
+        this.jwtDecrypter = jwtDecrypter;
+        return this;
+    }
+
+    public AuthorizationServerConfigurer clientJOSEService(ClientJOSEService clientJOSEService) {
+        this.clientJOSEService = clientJOSEService;
+        return this;
+    }
+
+    public AuthorizationServerConfigurer userAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.userAuthenticationManager = userAuthenticationManager;
         return this;
     }
 
@@ -142,7 +199,6 @@ public class AuthorizationServerConfigurer {
         Map<Class<? extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>>,
                 SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>> configurers = new LinkedHashMap<>();
 
-        configurers.put(JOSEConfigurer.class, new JOSEConfigurer());
         configurers.put(ClientAuthenticationConfigurer.class, new ClientAuthenticationConfigurer());
         configurers.put(AuthorizationEndpointConfigurer.class, new AuthorizationEndpointConfigurer());
         configurers.put(TokenEndpointConfigurer.class, new TokenEndpointConfigurer());
@@ -164,5 +220,12 @@ public class AuthorizationServerConfigurer {
     @SuppressWarnings("unchecked")
     public final <T extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>> T getConfigurer(Class<T> clazz) {
         return (T) configurers.get(clazz);
+    }
+
+    private static class EmptyJwkSource implements JWKSource<SecurityContext> {
+        @Override
+        public List<JWK> get(JWKSelector jwkSelector, SecurityContext context) throws KeySourceException {
+            return null;
+        }
     }
 }

@@ -36,7 +36,7 @@ public class AuthorizationServerConfiguration extends WebSecurityConfigurerAdapt
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.setSharedObject(RequestMappingDetector.class, dynamicEndpointRegister());
+        http.setSharedObject(RequestMappingDetector.class, requestMappingDetector());
         http.setSharedObject(AuthorizationEndpoint.class, authorizationEndpoint());
         http.setSharedObject(TokenEndpoint.class, tokenEndpoint());
 
@@ -64,7 +64,7 @@ public class AuthorizationServerConfiguration extends WebSecurityConfigurerAdapt
     }
 
     @Bean
-    public RequestMappingDetector dynamicEndpointRegister() {
+    public RequestMappingDetector requestMappingDetector() {
         return new RequestMappingDetector();
     }
 

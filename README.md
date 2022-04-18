@@ -3,6 +3,7 @@
 基于 Spring Security 的支持细粒度配置的 OAuth2/OpenID Connect 认证授权服务框架。
 
 **优点：**
+
 * 更简单、更易理解的接口
 * 分功能的细粒度配置方式
 * 支持多种客户端认证模式
@@ -10,14 +11,15 @@
 * .....(未完待续)
 
 **缺失功能：**
+
 * 令牌自省
 * 令牌吊销
 * PKCE
 * ID Token
 * 支持完整的 Open ID Connect 协议。
 
-
 # 使用方式
+
 ``` java
 //添加 @EnableAuthorizationServer 注解，并继承 AuthorizationServerConfigurationAdapter 配置类
 @EnableAuthorizationServer 
@@ -61,17 +63,33 @@ private class OAuth2Configuration extends AuthorizationServerConfigurationAdapte
 
   全局服务配置。可自定义授权端点 Path、令牌端点 Path 等。
 
+* jwkSource
+
+  配置认证认证授权服务解密、签名密钥集合。
+
+* jwtSigner
+
+  自定义认证授权服务签名功能。缺省实现为 **DefaultJWTSigner**
+
+* jwtDecrypter
+
+  自定义认证授权解密功能。缺省实现为 **DefaultJWTDecrypter**
+
+* clientJOSEService
+
+  自定义验证客户端签名以及加密响应信息的功能。缺省实现为 **DefaultClientJOSEService**
+
 * exceptionWriter
 
   自定义异常处理类，当授权异常时会使用此接口将异常响应给客户端。异常响应格式必须符合 OAuth2 规范。
-  
-  缺省实现为 **OAuthExceptionWriter**。
-  
+
+  缺省实现为 **DefaultExceptionWriter**。
+
 * requestResolver
 
   自定义请求解析器，用于解析授权请求、令牌颁发请求。
 
-  缺省实现为 **DefualtRequestResolver**。
+  缺省实现为 **DefaultRequestResolver**。
 
 * tokenGranter
 
@@ -89,43 +107,17 @@ private class OAuth2Configuration extends AuthorizationServerConfigurationAdapte
 
 ```java
 authorizationServerConfigurer
-  	.clientService(...) //必需
-  	.serverConfig(...)
-  	.exceptionWriter(...)
-  	.useAuthenticationManager(...)
-    	.tokneSevice(...) //必需
-  	.requestResolver(...)
-  	.tokenGranter(...);
-```
-
-### JOSEConfigurer
-
-用于配置加解密、加验签功能。
-
-* jwkSource
-
-  配置解密、签名密钥集合。
-
-* jwtSigner
-
-  自定义签名实现类。缺省实现为 **DefaultJWTSigner**
-
-* jwtDecrypter
-
-  自定义解密实现类。缺省实现为 **DefaultJWTDecrypter**
-
-如不配置密钥或者签名实现类、解密实现类。则无法使用 id token 加签、request object 解密等功能。
-
-```java
-authorizationServerConfigurer.jose(new Customizer<JOSEConfigurer>() {
-  @Override
-  public void customize(JOSEConfigurer configurer) {
-	configurer
-	  .jwkSource(...)
-	  .jwtDecrypter(...)
-	  .jwtSigner(...);
-  }
-})
+        .clientService(...) //必需
+        .serverConfig(...)
+        .exceptionWriter(...)
+        .jwkSource(...)
+        .jwtDecrypter(...)
+        .jwtSigner(...)
+        .clientJOSESigner(...)
+        .useAuthenticationManager(...)
+        .tokneSevice(...) //必需
+        .requestResolver(...)
+        .tokenGranter(...);
 ```
 
 ### ClientAuthenticationConfigurer
@@ -145,15 +137,15 @@ authorizationServerConfigurer.jose(new Customizer<JOSEConfigurer>() {
   自定义客户端认证成功处理处理器。非必需，框架自带缺省实现。
 
 ```java
-authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
-    @Override
-    public void customize(ClientAuthenticationConfigurer configurer) {
-      configurer
-      	.allowedClientAuthMethods(...)
+authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenticationConfigurer>(){
+@Override
+public void customize(ClientAuthenticationConfigurer configurer){
+        configurer
+        .allowedClientAuthMethods(...)
         .authenticationFailureHandler(...)
         .authenticationSuccessHandler(...);
-    }
-})
+        }
+        })
 ```
 
 ### AuthorizationEndpointConfigurer
@@ -169,14 +161,14 @@ authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenti
   用于授权码颁发、消费功能。如果需要使用授权码模式，需要实现对应接口。
 
 ```java
-authorizationServerConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {
-  @Override
-  public void customize(AuthorizationEndpointConfigurer configurer) {
-	configurer
-          .approvalService(...)
-          .authorizationCodeService(...);
-  }
-});
+authorizationServerConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>(){
+@Override
+public void customize(AuthorizationEndpointConfigurer configurer){
+        configurer
+        .approvalService(...)
+        .authorizationCodeService(...);
+        }
+        });
 ```
 
 ### TokenEndpointConfigurer
@@ -184,11 +176,11 @@ authorizationServerConfigurer.authorizationEndpoint(new Customizer<Authorization
 配置令牌端点的功能。
 
 ```java
-authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigurer>() {
-  @Override
-  public void customize(TokenEndpointConfigurer configurer) {
+authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigurer>(){
+@Override
+public void customize(TokenEndpointConfigurer configurer){
 
-  }
-});
+        }
+        });
 ```
 
