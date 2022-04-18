@@ -81,7 +81,7 @@ private class OAuth2Configuration extends AuthorizationServerConfigurationAdapte
 
 * tokneSevice
 
-  设置令牌颁发服务，用于生成、存储、查找访问令牌、刷新令牌，开发者需要自定义该实现类。
+  设置令牌颁发服务，用于生成、存储、查找访问令牌、刷新令牌，**开发者需要实现对应接口**。
 
 * useAuthenticationManager
 
@@ -93,7 +93,7 @@ authorizationServerConfigurer
   	.serverConfig(...)
   	.exceptionWriter(...)
   	.useAuthenticationManager(...)
-    .tokneSevice(...) //必需
+    	.tokneSevice(...) //必需
   	.requestResolver(...)
   	.tokenGranter(...)
 ```
@@ -161,11 +161,11 @@ authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenti
 
 * approvalService
 
-  用于管理用户同意。如果需要使用授权码模式，该类一般都需要自定义。
+  用于管理用户同意。如果需要使用授权码模式，需要实现对应接口。
 
 * authorizationCodeService
 
-  用于授权码颁发、消费功能。如果需要使用授权码模式，该类一般都需要自定义。
+  用于授权码颁发、消费功能。如果需要使用授权码模式，需要实现对应接口。
 
 ```java
 authorizationServerConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {
@@ -183,7 +183,7 @@ authorizationServerConfigurer.authorizationEndpoint(new Customizer<Authorization
 配置令牌端点的功能。
 
 ```java
-authorizationServerConfigurer.authorizationEndpoint(new Customizer<TokenEndpointConfigurer>() {
+authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigurer>() {
   @Override
   public void customize(TokenEndpointConfigurer configurer) {
 
