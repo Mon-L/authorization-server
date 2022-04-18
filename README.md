@@ -65,7 +65,7 @@ private class OAuth2Configuration extends AuthorizationServerConfigurationAdapte
 
 * jwkSource
 
-  配置认证认证授权服务解密、签名密钥集合。
+  配置认证授权服务解密、签名密钥集合。
 
 * jwtSigner
 
