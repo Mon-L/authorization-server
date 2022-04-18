@@ -46,7 +46,7 @@ public class ServerSecurityConfigurationTest {
                         .jose(new Customizer<JOSEConfigurer>() {
                             @Override
                             public void customize(JOSEConfigurer configurer) {
-                                
+
                             }
                         })
                         .clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {

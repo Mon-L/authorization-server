@@ -27,7 +27,6 @@ public class ServerSecurityConfigurer {
 
     private RequestMatcher requestMatcher;
     private ClientService clientService;
-
     private ServerConfig serverConfig = new ServerConfig.Builder().build();
     private OAuth2ExceptionWriter exceptionWriter = new DefaultOAuth2ExceptionWriter();
 
@@ -44,7 +43,7 @@ public class ServerSecurityConfigurer {
         return this;
     }
 
-    public ServerSecurityConfigurer providerConfig(ServerConfig serverConfig) {
+    public ServerSecurityConfigurer serverConfig(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
         return this;
     }
