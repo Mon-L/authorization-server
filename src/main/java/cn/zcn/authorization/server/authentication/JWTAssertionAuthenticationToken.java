@@ -53,7 +53,7 @@ public class JWTAssertionAuthenticationToken extends AbstractAuthenticationToken
         return jwt;
     }
 
-    public JWT getJwt() {
+    public JWT getAssertion() {
         return jwt;
     }
 

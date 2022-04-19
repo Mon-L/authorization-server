@@ -2,7 +2,9 @@ package cn.zcn.authorization.server;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -67,6 +69,11 @@ public interface Client {
      * 令牌请求中客户端凭证签名算法
      */
     JWSAlgorithm getTokenEndpointAuthSigningAlg();
+
+    /**
+     * 获取客户端权限
+     */
+    Collection<? extends GrantedAuthority> getAuthorities();
 
     /**
      * 客户端更新时间

@@ -11,6 +11,7 @@ import cn.zcn.authorization.server.authentication.provider.ClientSecretAuthentic
 import cn.zcn.authorization.server.authentication.provider.JWTAssertionAuthenticationProvider;
 import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.filter.ClientAuthenticationFilter;
+import cn.zcn.authorization.server.jose.ClientJOSEService;
 import com.google.common.collect.Sets;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -98,15 +99,15 @@ public class ClientAuthenticationConfigurer extends SecurityConfigurerAdapter<De
 
         authenticationProviders = new ArrayList<>();
         if (allowedClientAuthMethods.contains(ClientAuthMethod.SECRET_BASIC) || allowedClientAuthMethods.contains(ClientAuthMethod.SECRET_POST)) {
-            ClientSecretAuthenticationProvider provider = new ClientSecretAuthenticationProvider();
-            provider.setClientService(clientService);
-            authenticationProviders.add(provider);
+            authenticationProviders.add(new ClientSecretAuthenticationProvider(clientService));
         }
 
         if (allowedClientAuthMethods.contains(ClientAuthMethod.SECRET_POST) || allowedClientAuthMethods.contains(ClientAuthMethod.PRIVATE_KEY)) {
-            JWTAssertionAuthenticationProvider provider = new JWTAssertionAuthenticationProvider();
-
-            authenticationProviders.add(provider);
+            authenticationProviders.add(new JWTAssertionAuthenticationProvider(
+                    serverConfig,
+                    clientService,
+                    builder.getSharedObject(ClientJOSEService.class)
+            ));
         }
     }
 

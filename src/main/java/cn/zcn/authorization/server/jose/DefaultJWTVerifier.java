@@ -52,7 +52,7 @@ public class DefaultJWTVerifier implements JWTVerifier {
             JWSVerifier jwsVerifier = jwsVerifierFactory.createJWSVerifier(jws.getHeader(), key);
             return jws.verify(jwsVerifier);
         } catch (JOSEException e) {
-            throw new JOSERuntimeException("Failed to verify jws." + e.getMessage(), e);
+            throw new JOSERuntimeException(e.getMessage(), e);
         }
     }
 

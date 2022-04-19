@@ -53,7 +53,7 @@ public class DefaultJWTSigner implements JWTSigner {
             jwsObject.sign(jwsSigner);
             return jwsObject;
         } catch (JOSEException e) {
-            throw new JOSERuntimeException("Failed to sign jwt " + e.getMessage(), e);
+            throw new JOSERuntimeException(e.getMessage(), e);
         }
     }
 

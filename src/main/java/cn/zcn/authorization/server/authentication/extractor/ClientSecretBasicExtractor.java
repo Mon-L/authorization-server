@@ -45,8 +45,16 @@ public class ClientSecretBasicExtractor implements AuthenticationExtractor {
         return new UsernamePasswordAuthenticationToken(clientId, clientSecret);
     }
 
-    private String[] extractAndDecodeHeader(String header) throws AuthenticationException, UnsupportedEncodingException {
-        byte[] base64Token = header.substring(BASIC.length()).getBytes(credentialsCharset);
+    /**
+     * 抽取 http header authorization 中的 client id、client secret
+     *
+     * @param authorization http header authorization
+     * @return 字符串数组，array[0] = client id，array[1] = client secret
+     * @throws AuthenticationException      客户端凭证不合法
+     * @throws UnsupportedEncodingException Base64 解码 authorization 失败
+     */
+    private String[] extractAndDecodeHeader(String authorization) throws AuthenticationException, UnsupportedEncodingException {
+        byte[] base64Token = authorization.substring(BASIC.length()).getBytes(credentialsCharset);
         byte[] decoded;
 
         try {

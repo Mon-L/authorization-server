@@ -51,7 +51,7 @@ public class DefaultJWTEncrypter implements JWTEncrypter {
 
             return encryptedJWT;
         } catch (JOSEException e) {
-            throw new JOSERuntimeException("Failed to encrypt jwt." + e.getMessage(), e);
+            throw new JOSERuntimeException(e.getMessage(), e);
         }
     }
 

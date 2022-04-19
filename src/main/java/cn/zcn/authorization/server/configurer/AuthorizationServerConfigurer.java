@@ -89,7 +89,7 @@ public class AuthorizationServerConfigurer {
         }
 
         if (requestResolver == null) {
-            requestResolver = new DefaultRequestResolver();
+            requestResolver = new DefaultRequestResolver(serverConfig, clientService, jwtDecrypter, clientJOSEService);
         }
 
         if (tokenGranter == null) {
@@ -169,7 +169,7 @@ public class AuthorizationServerConfigurer {
     }
 
     public AuthorizationServerConfigurer userAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.userAuthenticationManager = userAuthenticationManager;
+        this.userAuthenticationManager = authenticationManager;
         return this;
     }
 

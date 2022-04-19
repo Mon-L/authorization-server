@@ -143,7 +143,7 @@ public class DefaultJWTDecrypterTest {
         assertThatExceptionOfType(JOSERuntimeException.class)
                 .isThrownBy(() -> jwtDecrypter.decrypt(encryptedJWT))
                 .withCauseInstanceOf(JOSEException.class)
-                .withMessageStartingWith("Failed to encrypt jwt.");
+                .withMessageStartingWith("unable to decrypt block");
     }
 
     @Test

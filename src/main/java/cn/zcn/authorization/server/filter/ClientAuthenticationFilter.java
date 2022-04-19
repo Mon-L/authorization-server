@@ -49,7 +49,7 @@ public class ClientAuthenticationFilter extends OncePerRequestFilter {
         try {
             Authentication authentication = null;
 
-            /**
+            /*
              * 遍历 authenticationExtractors 获取客户端凭证
              */
             for (AuthenticationExtractor extractor : authenticationExtractors) {
@@ -62,7 +62,7 @@ public class ClientAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (authentication != null) {
-                /**
+                /*
                  * 验证客户端的身份
                  */
                 authentication = authenticationManager.authenticate(authentication);

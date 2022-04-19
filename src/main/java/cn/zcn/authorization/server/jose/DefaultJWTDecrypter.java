@@ -56,7 +56,7 @@ public class DefaultJWTDecrypter implements JWTDecrypter {
             JWEDecrypter jweDecrypter = jweDecrypterFactory.createJWEDecrypter(jwe.getHeader(), key);
             jwe.decrypt(jweDecrypter);
         } catch (JOSEException e) {
-            throw new JOSERuntimeException("Failed to encrypt jwt." + e.getMessage(), e);
+            throw new JOSERuntimeException(e.getMessage(), e);
         }
     }
 

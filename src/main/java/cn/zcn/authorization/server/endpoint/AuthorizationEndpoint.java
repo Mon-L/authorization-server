@@ -144,7 +144,7 @@ public class AuthorizationEndpoint {
      */
     private View issueAccessToken(Client client, AuthorizationRequest authorizationRequest) {
         try {
-            TokenRequest tokenRequest = new TokenRequest(authorizationRequest.getClientId(), authorizationRequest.getScope(), "implicit", authorizationRequest.getRequestParameters());
+            TokenRequest tokenRequest = new TokenRequest(authorizationRequest.getClientId(), authorizationRequest.getScope(), "implicit", authorizationRequest.getParameters());
             tokenRequest.setAuthorizationRequest(authorizationRequest);
 
             AccessToken accessToken = tokenGranter.grant(client, tokenRequest);
@@ -171,7 +171,7 @@ public class AuthorizationEndpoint {
     }
 
     private String buildSuccessfulRedirectUrl(AuthorizationRequest authorizationRequest, Map<String, String> parameters, boolean isFragment) {
-        String state = authorizationRequest.getRequestParameters().get(OAuth2Constants.FIELD.STATE);
+        String state = authorizationRequest.getStringParameter(OAuth2Constants.FIELD.STATE);
         if (StringUtils.hasText(state)) {
             parameters.put(OAuth2Constants.FIELD.STATE, state);
         }
@@ -181,7 +181,7 @@ public class AuthorizationEndpoint {
 
     private String buildErrorRedirectUrl(AuthorizationRequest authorizationRequest, OAuth2Exception e) {
         Map<String, String> parameters = new HashMap<>();
-        String state = authorizationRequest.getRequestParameters().get(OAuth2Constants.FIELD.STATE);
+        String state = authorizationRequest.getStringParameter(OAuth2Constants.FIELD.STATE);
 
         if (StringUtils.hasText(e.getErrorCode())) {
             parameters.put(OAuth2Constants.ERROR.ERROR, e.getErrorCode());

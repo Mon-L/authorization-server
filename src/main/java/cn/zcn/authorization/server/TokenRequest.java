@@ -1,9 +1,10 @@
 package cn.zcn.authorization.server;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-public class TokenRequest {
+public class TokenRequest implements Serializable {
 
     private final String clientId;
     private final String grantType;
