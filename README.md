@@ -6,8 +6,9 @@
 
 * 更简单、更易理解的接口
 * 分功能的细粒度配置方式
-* 支持多种客户端认证模式
-* 支持 JWT/JWK/JWS/JWE，用于加验签、加解密。
+* 支持多种客户端认证模式，如client secret、client assertion
+* 支持 JWT/JWK/JWS/JWE，用于加验签、加解密
+* 支持使用 Access Token 访问受保护的资源
 * .....(未完待续)
 
 **缺失功能：**
@@ -141,11 +142,39 @@ authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenti
 @Override
 public void customize(ClientAuthenticationConfigurer configurer){
         configurer
-        .allowedClientAuthMethods(...)
-        .authenticationFailureHandler(...)
-        .authenticationSuccessHandler(...);
-        }
-        })
+            .allowedClientAuthMethods(...)
+            .authenticationFailureHandler(...)
+            .authenticationSuccessHandler(...);
+    }
+})
+```
+
+### TokenAuthenticationConfigurer
+
+用于配置那些请求可以使用访问令牌作为凭证访问受保护的资源
+
+* requestMatcher
+
+  用于匹配需要验证访问令牌的请求
+
+* authenticationManager
+
+  用于验证访问令牌是否有效。缺省实现为 **OAuth2AuthenticationManager**
+
+* authenticationEntryPoint
+
+  用于当访问令牌验证失败时将信息响应给客户端。缺省实现为 **OAuth2AuthenticationEntryPoint**
+
+```java
+authorizationServerConfigurer.tokenAuthentication(new Customizer<TokenAuthenticationConfigurer>(){
+@Override
+public void customize(TokenAuthenticationConfigurer configurer){
+        configurer
+            .requestMatcher(...)
+            .authenticationManager(...)
+            .authenticationEntryPoint(...);
+    }
+})
 ```
 
 ### AuthorizationEndpointConfigurer
@@ -165,10 +194,10 @@ authorizationServerConfigurer.authorizationEndpoint(new Customizer<Authorization
 @Override
 public void customize(AuthorizationEndpointConfigurer configurer){
         configurer
-        .approvalService(...)
-        .authorizationCodeService(...);
-        }
-        });
+            .approvalService(...)
+            .authorizationCodeService(...);
+    }
+});
 ```
 
 ### TokenEndpointConfigurer
@@ -180,7 +209,7 @@ authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigur
 @Override
 public void customize(TokenEndpointConfigurer configurer){
 
-        }
-        });
+	}
+});
 ```
 

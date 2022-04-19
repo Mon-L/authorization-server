@@ -188,6 +188,11 @@ public class AuthorizationServerConfigurer {
         return this;
     }
 
+    public AuthorizationServerConfigurer tokenAuthentication(Customizer<TokenAuthenticationConfigurer> configurer) {
+        configurer.customize(getConfigurer(TokenAuthenticationConfigurer.class));
+        return this;
+    }
+
     public final Map<Class<? extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>>,
             SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>> getConfigurers() {
         return Collections.unmodifiableMap(configurers);
@@ -202,6 +207,7 @@ public class AuthorizationServerConfigurer {
         configurers.put(ClientAuthenticationConfigurer.class, new ClientAuthenticationConfigurer());
         configurers.put(AuthorizationEndpointConfigurer.class, new AuthorizationEndpointConfigurer());
         configurers.put(TokenEndpointConfigurer.class, new TokenEndpointConfigurer());
+        configurers.put(TokenAuthenticationConfigurer.class, new TokenAuthenticationConfigurer());
         return configurers;
     }
 

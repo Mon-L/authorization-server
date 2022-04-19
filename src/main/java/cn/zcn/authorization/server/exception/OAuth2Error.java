@@ -14,6 +14,7 @@ public class OAuth2Error {
     public static final OAuth2Error INVALID_GRANT = new OAuth2Error("invalid_grant", HttpStatus.UNAUTHORIZED);
     public static final OAuth2Error INVALID_REQUEST = new OAuth2Error("invalid_request", HttpStatus.BAD_REQUEST);
     public static final OAuth2Error INVALID_SCOPE = new OAuth2Error("invalid_scope", HttpStatus.BAD_REQUEST);
+    public static final OAuth2Error INVALID_TOKEN = new OAuth2Error("invalid_token", HttpStatus.UNAUTHORIZED);
     public static final OAuth2Error UNSUPPORTED_RESPONSE_TYPE = new OAuth2Error("unsupported_response_type", HttpStatus.BAD_REQUEST);
 
     private static final Map<String, OAuth2Error> lookup = new HashMap<>();
@@ -26,6 +27,7 @@ public class OAuth2Error {
         lookup.put(INVALID_GRANT.errorCode, INVALID_GRANT);
         lookup.put(INVALID_REQUEST.errorCode, INVALID_REQUEST);
         lookup.put(INVALID_SCOPE.errorCode, INVALID_SCOPE);
+        lookup.put(INVALID_TOKEN.errorCode, INVALID_TOKEN);
         lookup.put(UNSUPPORTED_RESPONSE_TYPE.errorCode, UNSUPPORTED_RESPONSE_TYPE);
     }
 
