@@ -151,9 +151,9 @@ public void customize(ClientAuthenticationConfigurer configurer){
 
 ### TokenAuthenticationConfigurer
 
-用于配置那些请求可以使用访问令牌作为凭证访问受保护的资源
+用于配置使用 Access Token 作为凭证访问受保护资源的功能
 
-* requestMatcher
+* requestMatcher。缺省拦截 OAuth2 相关端点
 
   用于匹配需要验证访问令牌的请求
 
