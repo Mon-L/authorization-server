@@ -100,6 +100,7 @@ public class OAuth2Utils {
      */
     public static boolean urlMatches(String requestURL, String registerURL) {
         try {
+            //首先解码URL
             URL req = new URL(URLDecoder.decode(requestURL, StandardCharsets.UTF_8.name()));
             URL reg = new URL(URLDecoder.decode(registerURL, StandardCharsets.UTF_8.name()));
 

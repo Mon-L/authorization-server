@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * 服务配置类，包含授权服务所有可配置的类{@link SecurityConfigurerAdapter}
@@ -46,7 +47,7 @@ public class AuthorizationServerConfigurer {
     /**
      * 用于授权服务签名、解密的密钥集合
      */
-    private JWKSource<SecurityContext> jwkSource = new EmptyJwkSource();
+    private JWKSource<SecurityContext> jwkSource;
 
     /**
      * 用于授权服务签名，如 id token 签名等
@@ -68,32 +69,31 @@ public class AuthorizationServerConfigurer {
      */
     private AuthenticationManager userAuthenticationManager;
 
-    private ServerConfig serverConfig = new ServerConfig.Builder().build();
+    private ServerConfig serverConfig;
 
-    private ExceptionWriter exceptionWriter = new DefaultExceptionWriter();
+    private ExceptionWriter exceptionWriter;
+
+    public <T> T setIfNullable(T t, Supplier<T> supplier) {
+        return t != null ? t : supplier.get();
+    }
 
     public final void init(HttpSecurity builder) {
         Assert.notNull(clientService, "ClientService must not be null.");
 
         // 配置缺省实现类
-        if (jwtSigner == null) {
-            jwtSigner = new DefaultJWTSigner(jwkSource);
-        }
+        serverConfig = setIfNullable(serverConfig, () -> new ServerConfig.Builder().build());
+        exceptionWriter = setIfNullable(exceptionWriter, DefaultExceptionWriter::new);
 
-        if (jwtDecrypter == null) {
-            jwtDecrypter = new DefaultJWTDecrypter(jwkSource);
-        }
+        jwkSource = setIfNullable(jwkSource, EmptyJwkSource::new);
+        jwtSigner = setIfNullable(jwtSigner, () -> new DefaultJWTSigner(jwkSource));
+        jwtDecrypter = setIfNullable(jwtDecrypter, () -> new DefaultJWTDecrypter(jwkSource));
+        clientJOSEService = setIfNullable(clientJOSEService, DefaultClientJOSEService::new);
 
-        if (clientJOSEService == null) {
-            clientJOSEService = new DefaultClientJOSEService();
-        }
+        requestResolver = setIfNullable(requestResolver, () -> new DefaultRequestResolver(serverConfig, clientService, jwtDecrypter, clientJOSEService));
 
-        if (requestResolver == null) {
-            requestResolver = new DefaultRequestResolver(serverConfig, clientService, jwtDecrypter, clientJOSEService);
-        }
-
-        if (tokenGranter == null) {
+        tokenGranter = setIfNullable(tokenGranter, () -> {
             CompositeTokenGranter compositeTokenGranter = new CompositeTokenGranter();
+
             compositeTokenGranter.addTokenGranter(new AuthorizationCodeTokenGranter(
                     getConfigurer(AuthorizationEndpointConfigurer.class).getAuthorizationCodeService(), tokenService));
             compositeTokenGranter.addTokenGranter(new ClientCredentialsTokenGranter(tokenService));
@@ -104,16 +104,17 @@ public class AuthorizationServerConfigurer {
                 compositeTokenGranter.addTokenGranter(new ResourceOwnerPasswordTokenGranter(tokenService, userAuthenticationManager));
             }
 
-            tokenGranter = compositeTokenGranter;
-        }
+            return compositeTokenGranter;
+        });
 
-        //将需要共享的配置添加到 shared object 中
-        builder.setSharedObject(JWTSigner.class, jwtSigner);
-        builder.setSharedObject(JWTDecrypter.class, jwtDecrypter);
-        builder.setSharedObject(ClientJOSEService.class, clientJOSEService);
         builder.setSharedObject(ClientService.class, clientService);
         builder.setSharedObject(ServerConfig.class, serverConfig);
         builder.setSharedObject(ExceptionWriter.class, exceptionWriter);
+
+        builder.setSharedObject(JWTSigner.class, jwtSigner);
+        builder.setSharedObject(JWTDecrypter.class, jwtDecrypter);
+        builder.setSharedObject(ClientJOSEService.class, clientJOSEService);
+
         builder.setSharedObject(RequestResolver.class, requestResolver);
         builder.setSharedObject(TokenGranter.class, tokenGranter);
     }

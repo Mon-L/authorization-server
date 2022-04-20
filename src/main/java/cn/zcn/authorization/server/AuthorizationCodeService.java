@@ -4,7 +4,7 @@ import cn.zcn.authorization.server.exception.OAuth2Exception;
 
 public interface AuthorizationCodeService {
 
-    String createAuthorizationCode(OAuth2PreviousAuthentication authentication) throws OAuth2Exception;
+    String createAuthorizationCode(UserApprovalAuthentication authentication) throws OAuth2Exception;
 
-    OAuth2PreviousAuthentication consumeAuthorizationCode(String code) throws OAuth2Exception;
+    UserApprovalAuthentication consumeAuthorizationCode(String code) throws OAuth2Exception;
 }

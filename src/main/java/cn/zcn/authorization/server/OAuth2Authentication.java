@@ -11,10 +11,10 @@ public class OAuth2Authentication extends AbstractAuthenticationToken {
     private final Authentication authentication;
 
     /**
-     * OAuth2 授权信息。
+     * OAuth2 认证信息。
      *
      * @param tokenRequest   令牌请求，包含令牌请求时的所有参数
-     * @param authentication 已授权的用户凭证或客户端凭证
+     * @param authentication 已授权的用户或客户端
      */
     public OAuth2Authentication(@NonNull TokenRequest tokenRequest, @NonNull Authentication authentication) {
         super(authentication.getAuthorities());

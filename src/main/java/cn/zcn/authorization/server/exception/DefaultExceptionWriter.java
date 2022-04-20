@@ -1,5 +1,6 @@
 package cn.zcn.authorization.server.exception;
 
+import cn.zcn.authorization.server.OAuth2Constants;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.GenericHttpMessageConverter;
@@ -107,15 +108,15 @@ public class DefaultExceptionWriter implements ExceptionWriter {
         public Map<String, String> convert(OAuth2Exception e) {
             Map<String, String> ret = new LinkedHashMap<>();
             if (StringUtils.hasText(e.getErrorCode())) {
-                ret.put("error", e.getErrorCode());
+                ret.put(OAuth2Constants.ERROR.ERROR, e.getErrorCode());
             }
 
             if (StringUtils.hasText(e.getMessage())) {
-                ret.put("error_description", e.getErrorDescription());
+                ret.put(OAuth2Constants.ERROR.ERROR_DESCRIPTION, e.getErrorDescription());
             }
 
             if (StringUtils.hasText(e.getErrorUri())) {
-                ret.put("error_uri", e.getErrorUri());
+                ret.put(OAuth2Constants.ERROR.ERROR_URI, e.getErrorUri());
             }
 
             return ret;

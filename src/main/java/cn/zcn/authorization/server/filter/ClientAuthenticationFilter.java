@@ -21,11 +21,11 @@ import java.util.List;
  */
 public class ClientAuthenticationFilter extends OncePerRequestFilter {
 
-    private RequestMatcher requestMatcher;
-    private AuthenticationManager authenticationManager;
-    private List<AuthenticationExtractor> authenticationExtractors;
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
-    private AuthenticationFailureHandler authenticationFailureHandler;
+    private final RequestMatcher requestMatcher;
+    private final AuthenticationManager authenticationManager;
+    private final List<AuthenticationExtractor> authenticationExtractors;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
     public ClientAuthenticationFilter(RequestMatcher requestMatcher,
                                       List<AuthenticationExtractor> authenticationExtractors,

@@ -93,14 +93,15 @@ public class AuthorizationEndpoint {
             throw new InsufficientAuthenticationException("No login user!");
         }
 
-        AuthorizationRequest authorizationRequest = approvalService.loadAuthorizationRequestAfterApproveOrDeny(request, approvalParameters);
+        AuthorizationRequest authorizationRequest = approvalService.loadAuthorizationRequestAfterUserApproval(request, approvalParameters);
         if (authorizationRequest == null) {
             throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Cannot approve uninitialized authorization request.");
         }
 
-        boolean approved = approvalService.updateApproveOrDeny((Authentication) principal, authorizationRequest, approvalParameters);
+        approvalService.updateApprovalOrDenying(authorizationRequest, approvalParameters);
+        approvalService.storeApprovalOrDenying((Authentication) principal, authorizationRequest, approvalParameters);
 
-        if (!approved) {
+        if (!authorizationRequest.isApproved()) {
             String redirectUri = buildErrorRedirectUrl(authorizationRequest, OAuth2Error.createException(OAuth2Error.ACCESS_DENIED, "User denied access"));
             return new RedirectView(redirectUri, false, true, false);
         }
@@ -124,7 +125,7 @@ public class AuthorizationEndpoint {
      */
     private View issueAuthorizationCode(Authentication authentication, AuthorizationRequest authorizationRequest) {
         try {
-            String code = authorizationCodeService.createAuthorizationCode(new OAuth2PreviousAuthentication(authorizationRequest, authentication));
+            String code = authorizationCodeService.createAuthorizationCode(new UserApprovalAuthentication(authorizationRequest, authentication));
 
             Map<String, String> response = new HashMap<>();
             response.put(OAuth2Constants.FIELD.CODE, code);

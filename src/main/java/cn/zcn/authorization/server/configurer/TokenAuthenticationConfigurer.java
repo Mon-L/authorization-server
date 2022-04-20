@@ -16,7 +16,7 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
- * 配置使用 access token 访问受保护资源的功能。该类会在{@code HttpSecurity}中添加一个过滤器，用于验证 access token 是否有效
+ * 配置使用 access token 访问受保护资源的功能。该类会在{@link HttpSecurity}中添加一个过滤器，用于验证 access token 是否有效
  */
 public class TokenAuthenticationConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 

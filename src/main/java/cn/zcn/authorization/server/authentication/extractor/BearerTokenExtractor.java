@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
 /**
- *  抽取请求头中的 Bearer Token
+ * 抽取请求头中的 Bearer Token
  */
 public class BearerTokenExtractor implements AuthenticationExtractor {
+
+    private final static String BEARER_PREFIX = "bearer ";
 
     @Override
     public Authentication extract(HttpServletRequest request) throws AuthenticationException {
@@ -30,8 +32,8 @@ public class BearerTokenExtractor implements AuthenticationExtractor {
         while (headers.hasMoreElements()) {
             String header = headers.nextElement().toLowerCase().trim();
 
-            if (header.startsWith(OAuth2Constants.FIELD.BEARER_TYPE.toLowerCase())) {
-                String token = header.substring(OAuth2Constants.FIELD.BEARER_TYPE.length());
+            if (header.startsWith(BEARER_PREFIX)) {
+                String token = header.substring(BEARER_PREFIX.length());
                 int comma = token.indexOf(',');
                 if (comma > 0) {
                     token = token.substring(0, comma);

@@ -21,14 +21,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 拦截指定请求并校验请求头中携带的 Bearer Access Token 是否有效
+ */
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationExtractor tokenExtractor = new BearerTokenExtractor();
 
     private AuthenticationEntryPoint authenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
 
+    /**
+     * 请求匹配器，匹配需要拦截的请求
+     */
     private RequestMatcher requestMatcher;
 
+    /**
+     * 访问令牌验证器
+     */
     private AuthenticationManager authenticationManager;
 
     private boolean stateless = true;
@@ -65,7 +74,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void initFilterBean() throws ServletException {
+    protected void initFilterBean() {
         Assert.state(authenticationManager != null, "AuthenticationManager is required");
         Assert.state(requestMatcher != null, "RequestMatcher is required");
     }

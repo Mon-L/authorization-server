@@ -34,8 +34,8 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
             throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An redirect uri must be supplied.");
         }
 
-        OAuth2PreviousAuthentication previousAuthentication = authorizationCodeService.consumeAuthorizationCode(authorizationCode);
-        AuthorizationRequest authorizationRequest = previousAuthentication.getAuthorizationRequest();
+        UserApprovalAuthentication userApprovalAuthentication = authorizationCodeService.consumeAuthorizationCode(authorizationCode);
+        AuthorizationRequest authorizationRequest = userApprovalAuthentication.getAuthorizationRequest();
 
         if (!client.getClientId().equals(authorizationRequest.getClientId())) {
             throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch client id.");
@@ -46,8 +46,8 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
         }
 
         tokenRequest.setAuthorizationRequest(authorizationRequest);
-        OAuth2Authentication authentication = new OAuth2Authentication(tokenRequest, previousAuthentication.getUserAuthentication());
+        OAuth2Authentication authentication = new OAuth2Authentication(tokenRequest, userApprovalAuthentication.getUserAuthentication());
 
-        return tokenService.issueTokenBoundClient(client, authentication);
+        return tokenService.issueTokenBoundUser(client, authentication);
     }
 }

@@ -7,6 +7,7 @@ import cn.zcn.authorization.server.ClientService;
 import cn.zcn.authorization.server.ServerConfig;
 import cn.zcn.authorization.server.authentication.JWTAssertionAuthenticationToken;
 import cn.zcn.authorization.server.exception.JOSERuntimeException;
+import cn.zcn.authorization.server.exception.OAuth2Exception;
 import cn.zcn.authorization.server.jose.ClientJOSEService;
 import cn.zcn.authorization.server.jose.JWTVerifier;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -63,7 +64,7 @@ public class JWTAssertionAuthenticationProvider implements AuthenticationProvide
         if (claims.getExpirationTime() == null) {
             throw new BadCredentialsException("Client assertion must contain exp.");
         } else if (claims.getExpirationTime().before(now)) {
-            throw new BadCredentialsException("Client assertion already expired");
+            throw new BadCredentialsException("Client assertion already expired.");
         }
 
         if (claims.getIssuer() == null) {
@@ -78,9 +79,9 @@ public class JWTAssertionAuthenticationProvider implements AuthenticationProvide
             throw new BadCredentialsException("Mismatch between sub and aud.");
         }
 
-        if (claims.getAudience() == null) {
+        if (claims.getAudience().isEmpty()) {
             throw new BadCredentialsException("Client assertion must contain aud.");
-        } else if (!claims.getAudience().contains(serverConfig.getIssuer()) || !claims.getAudience().contains(serverConfig.getTokenEndpoint())) {
+        } else if (!claims.getAudience().contains(serverConfig.getIssuer()) && !claims.getAudience().contains(serverConfig.getTokenEndpoint())) {
             throw new BadCredentialsException("Client assertion must contain issuer or token endpoint path.");
         }
 
@@ -113,7 +114,7 @@ public class JWTAssertionAuthenticationProvider implements AuthenticationProvide
             return new JWTAssertionAuthenticationToken(assertion, client.getAuthorities());
         } catch (JOSERuntimeException e) {
             throw new BadCredentialsException("Failed to load client signature verifier.");
-        } catch (Exception e) {
+        } catch (OAuth2Exception e) {
             throw new BadCredentialsException("Failed to authenticate client.", e);
         }
     }

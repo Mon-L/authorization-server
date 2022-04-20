@@ -6,6 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 在简化模式、授权码模式中处理用户同意的接口。
@@ -20,17 +21,7 @@ public interface ApprovalService {
      * @param client               请求授权的客户端
      * @return 用户同意页面
      */
-    ModelAndView redirectForUserApproval(Client client, AuthorizationRequest authorizationRequest) throws OAuth2Exception;
-
-    /**
-     * 用于用户同意授权或拒绝授权后，用于加载跳转到授权页面前的授权请求参数。
-     * 在某些情况下，也许你需要从{@link javax.servlet.http.HttpSession} 、缓存、持久化数据库中加载。
-     *
-     * @param httpServletRequest 当前http request
-     * @param approvalParameters 用户同意参数
-     * @return {@link AuthorizationRequest} 找到了跳转用户同意页面之前保存的授权请求； null 没找到跳转用户同意页面之前保存的授权请求
-     */
-    AuthorizationRequest loadAuthorizationRequestAfterApproveOrDeny(HttpServletRequest httpServletRequest, Map<String, String> approvalParameters) throws OAuth2Exception;
+    ModelAndView redirectForUserApproval(Client client, AuthorizationRequest authorizationRequest);
 
     /**
      * 校验用户是否已同意了客户端请求的所有权限。
@@ -42,12 +33,36 @@ public interface ApprovalService {
     boolean isAllScopeApproved(Authentication authentication, AuthorizationRequest authorizationRequest);
 
     /**
-     * 更新用户授权信息
+     * 用于用户同意授权或拒绝授权后，获取授权请求参数。
+     * 在某些情况下，也许你需要从{@link javax.servlet.http.HttpSession} 、缓存、持久化数据库中加载。
+     *
+     * @param httpServletRequest 当前 http request
+     * @param approvalParameters 用户同意参数
+     * @return {@link AuthorizationRequest} 获取授权请求； null, 没找到授权请求
+     * @throws OAuth2Exception 异常
+     */
+    AuthorizationRequest loadAuthorizationRequestAfterUserApproval(HttpServletRequest httpServletRequest, Map<String, String> approvalParameters) throws OAuth2Exception;
+
+    /**
+     * 更新用户同意信息
+     * <p>
+     * 须使用{@link AuthorizationRequest#setScope(Set)}更新用户同意后的 scope。
+     * <p>
+     * 须使用{@link AuthorizationRequest#setApproved(boolean)}更新用户同意状态。
+     *
+     * @param authorizationRequest 授权请求参数
+     * @param approvalParameters   用户同意参数
+     * @throws OAuth2Exception 异常
+     */
+    void updateApprovalOrDenying(AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters);
+
+    /**
+     * 保存用户同意信息
      *
      * @param authentication       用户
-     * @param authorizationRequest 原始授权请求参数
+     * @param authorizationRequest 授权请求参数
      * @param approvalParameters   用户同意参数
-     * @return true，用户同意授权；false，用户拒绝授权
+     * @throws OAuth2Exception 异常
      */
-    boolean updateApproveOrDeny(Authentication authentication, AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters) throws OAuth2Exception;
+    void storeApprovalOrDenying(Authentication authentication, AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters) throws OAuth2Exception;
 }

@@ -6,20 +6,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.CredentialsContainer;
 
 /**
- * 封装授权码模式下的用户凭证。
+ * 授权码模式下的用户同意认证信息。
  * <p>
- * 授权码模式：
- * 第一阶段是用户登录并授权客户端访问其资源，授权服务器颁发授权码给客户端
+ * 授权码模式流程：
+ * 第一阶段是用户登录并授权客户端访问其资源，然后授权服务器颁发授权码给客户端
  * 第二阶段是客户端使用授权码兑换访问令牌
  * <p>
- * {@link OAuth2PreviousAuthentication} 封装的就是第一阶段的用户凭证及授权信息
+ * {@link UserApprovalAuthentication} 封装的就是第一阶段的用户同意及授权请求
  */
-public class OAuth2PreviousAuthentication extends AbstractAuthenticationToken {
+public class UserApprovalAuthentication extends AbstractAuthenticationToken {
 
     private final AuthorizationRequest authorizationRequest;
     private final Authentication userAuthentication;
 
-    public OAuth2PreviousAuthentication(@NonNull AuthorizationRequest authorizationRequest, @NonNull Authentication userAuthentication) {
+    public UserApprovalAuthentication(@NonNull AuthorizationRequest authorizationRequest, @NonNull Authentication userAuthentication) {
         super(userAuthentication.getAuthorities());
 
         this.authorizationRequest = authorizationRequest;
