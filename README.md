@@ -28,26 +28,23 @@ private class OAuth2Configuration extends AuthorizationServerConfigurationAdapte
 
     @Override
     public void configure(AuthorizationServerConfigurer authorizationServerConfigurer) {
-      	//自定义授权服务功能
-        authorizationServerConfigurer
-                .clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
-                    @Override
-                    public void customize(ClientAuthenticationConfigurer configurer) {
+        //自定义授权服务功能
+        authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenticationConfigurer>() {
+            @Override
+            public void customize(ClientAuthenticationConfigurer configurer) {
 
-                    }
-                })
-                .authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {
-                    @Override
-                    public void customize(AuthorizationEndpointConfigurer configurer) {
+            }
+        }).authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>() {
+            @Override
+            public void customize(AuthorizationEndpointConfigurer configurer) {
 
-                    }
-                })
-                .tokenEndpoint(new Customizer<TokenEndpointConfigurer>() {
-                    @Override
-                    public void customize(TokenEndpointConfigurer tokenEndpointConfigurer) {
+            }
+        }).tokenEndpoint(new Customizer<TokenEndpointConfigurer>() {
+            @Override
+            public void customize(TokenEndpointConfigurer tokenEndpointConfigurer) {
 
-                    }
-                });
+            }
+        });
     }
 }
 ```
@@ -139,8 +136,8 @@ authorizationServerConfigurer
 
 ```java
 authorizationServerConfigurer.clientAuthentication(new Customizer<ClientAuthenticationConfigurer>(){
-@Override
-public void customize(ClientAuthenticationConfigurer configurer){
+    @Override
+    public void customize(ClientAuthenticationConfigurer configurer){
         configurer
             .allowedClientAuthMethods(...)
             .authenticationFailureHandler(...)
@@ -167,8 +164,8 @@ public void customize(ClientAuthenticationConfigurer configurer){
 
 ```java
 authorizationServerConfigurer.tokenAuthentication(new Customizer<TokenAuthenticationConfigurer>(){
-@Override
-public void customize(TokenAuthenticationConfigurer configurer){
+    @Override
+    public void customize(TokenAuthenticationConfigurer configurer){
         configurer
             .requestMatcher(...)
             .authenticationManager(...)
@@ -191,8 +188,8 @@ public void customize(TokenAuthenticationConfigurer configurer){
 
 ```java
 authorizationServerConfigurer.authorizationEndpoint(new Customizer<AuthorizationEndpointConfigurer>(){
-@Override
-public void customize(AuthorizationEndpointConfigurer configurer){
+    @Override
+    public void customize(AuthorizationEndpointConfigurer configurer){
         configurer
             .approvalService(...)
             .authorizationCodeService(...);
@@ -206,10 +203,10 @@ public void customize(AuthorizationEndpointConfigurer configurer){
 
 ```java
 authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigurer>(){
-@Override
-public void customize(TokenEndpointConfigurer configurer){
+    @Override
+    public void customize(TokenEndpointConfigurer configurer){
 
-	}
+    }
 });
 ```
 
