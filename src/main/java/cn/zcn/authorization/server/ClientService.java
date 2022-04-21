@@ -1,6 +1,8 @@
 package cn.zcn.authorization.server;
 
 
+import cn.zcn.authorization.server.exception.OAuth2Exception;
+
 public interface ClientService {
 
     /**
@@ -9,5 +11,5 @@ public interface ClientService {
      * @param clientId 客户端ID
      * @return 客户端信息
      */
-    Client loadClientByClientId(String clientId);
+    Client loadClientByClientId(String clientId) throws OAuth2Exception;
 }

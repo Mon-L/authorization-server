@@ -30,9 +30,9 @@ public class ClientSecretAuthenticationProvider implements AuthenticationProvide
                 return new UsernamePasswordAuthenticationToken(clientId, storedClientSecret, client.getAuthorities());
             }
 
-            throw new BadCredentialsException("Client secret mismatch.");
+            throw new BadCredentialsException("Mismatch client secret.");
         } catch (Exception e) {
-            throw new BadCredentialsException("Client secret mismatch.", e);
+            throw new BadCredentialsException(e.getMessage(), e);
         }
     }
 

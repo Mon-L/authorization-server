@@ -24,13 +24,13 @@ public interface ApprovalService {
     ModelAndView redirectForUserApproval(Client client, AuthorizationRequest authorizationRequest);
 
     /**
-     * 校验用户是否已同意了客户端请求的所有权限。
+     * 校验用户是否之前已经同意过此客户端请求的所有权限，并且用户同意未过期
      *
      * @param authentication       用户
      * @param authorizationRequest 授权请求
      * @return true, 用户同意了客户端请求的所有权限；false, 用户未同意或部分同意了客户端请求权限
      */
-    boolean isAllScopeApproved(Authentication authentication, AuthorizationRequest authorizationRequest);
+    boolean isAlreadyApproved(Authentication authentication, AuthorizationRequest authorizationRequest);
 
     /**
      * 用于用户同意授权或拒绝授权后，获取授权请求参数。
@@ -47,22 +47,12 @@ public interface ApprovalService {
      * 更新用户同意信息
      * <p>
      * 须使用{@link AuthorizationRequest#setScope(Set)}更新用户同意后的 scope。
-     * <p>
-     * 须使用{@link AuthorizationRequest#setApproved(boolean)}更新用户同意状态。
-     *
-     * @param authorizationRequest 授权请求参数
-     * @param approvalParameters   用户同意参数
-     * @throws OAuth2Exception 异常
-     */
-    void updateApprovalOrDenying(AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters);
-
-    /**
-     * 保存用户同意信息
      *
      * @param authentication       用户
      * @param authorizationRequest 授权请求参数
      * @param approvalParameters   用户同意参数
+     * @return true, 用户同意授权；false,用户拒绝授权
      * @throws OAuth2Exception 异常
      */
-    void storeApprovalOrDenying(Authentication authentication, AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters) throws OAuth2Exception;
+    boolean updateApprovalOrDenying(Authentication authentication, AuthorizationRequest authorizationRequest, Map<String, String> approvalParameters);
 }

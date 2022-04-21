@@ -30,7 +30,7 @@ public class AuthorizationRequest implements Serializable {
                                 Set<String> responseType, String redirectUri,
                                 Map<String, String> requestParameters, boolean approved) {
         this.clientId = clientId;
-        this.scope = scope;
+        this.scope = Collections.unmodifiableSet(scope);
         this.approved = approved;
         this.redirectUri = redirectUri;
         this.responseType = Collections.unmodifiableSet(responseType);
