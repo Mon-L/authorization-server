@@ -3,6 +3,7 @@ package cn.zcn.authorization.server.endpoint;
 import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.OAuth2Error;
 import cn.zcn.authorization.server.grant.TokenGranter;
+import cn.zcn.authorization.server.utils.OAuth2Utils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class TokenEndpoint {
     private RequestResolver requestResolver;
 
     @RequestMapping(value = ServerConfig.TOKEN_ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<AccessToken> token(Principal principal, @RequestParam Map<String, String> parameters) {
+    public ResponseEntity<Map<String, String>> token(Principal principal, @RequestParam Map<String, String> parameters) {
         if (!(principal instanceof Authentication)) {
             throw new InsufficientAuthenticationException("No client authentication present.");
         }
@@ -35,7 +37,7 @@ public class TokenEndpoint {
         TokenRequest tokenRequest = requestResolver.resolve2TokenRequest(parameters, authenticatedClient);
 
         if (!StringUtils.hasText(tokenRequest.getGrantType())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch grant type.");
+            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Missing grant type.");
         }
 
         if (!authenticatedClientId.equals(tokenRequest.getClientId())) {
@@ -65,11 +67,30 @@ public class TokenEndpoint {
             throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported grant type : " + tokenRequest.getGrantType());
         }
 
+        return toResponse(accessToken);
+    }
+
+    private ResponseEntity<Map<String, String>> toResponse(AccessToken accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cache-Control", "no-store");
         headers.set("Pragma", "no-cache");
-        return new ResponseEntity<>(accessToken, headers, HttpStatus.OK);
+
+        Map<String, String> rsp = new LinkedHashMap<>();
+        rsp.put(OAuth2Constants.FIELD.CLIENT_ID, accessToken.getClientId());
+        rsp.put(OAuth2Constants.FIELD.TOKEN_TYPE, accessToken.getTokenType().name());
+        rsp.put(OAuth2Constants.FIELD.ACCESS_TOKEN, accessToken.getValue());
+
+        if (!accessToken.getScope().isEmpty()) {
+            rsp.put(OAuth2Constants.FIELD.SCOPE, OAuth2Utils.joinParameterString(accessToken.getScope()));
+        }
+
+        if (accessToken.getExpiration() != null) {
+            rsp.put(OAuth2Constants.FIELD.EXPIRES_IN, String.valueOf(accessToken.getExpiresIn()));
+        }
+
+        return new ResponseEntity<>(rsp, headers, HttpStatus.OK);
     }
+
 
     private String parseClientId(Principal principal) {
         Authentication client = (Authentication) principal;
