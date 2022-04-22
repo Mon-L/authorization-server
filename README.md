@@ -1,21 +1,21 @@
 # authorization-server
 
-基于 Spring Security 的支持细粒度配置的 OAuth2/OpenID Connect 认证授权服务框架。
+基于 Spring Security 支持细粒度配置的 OAuth2/OpenID Connect 认证授权服务框架。
 
-**优点：**
+**功能点：**
 
 * 更简单、更易理解的接口
 * 分功能的细粒度配置方式
 * 支持多种客户端认证模式，如client secret、client assertion
 * 支持 JWT/JWK/JWS/JWE，用于加验签、加解密
 * 支持使用 Access Token 访问受保护的资源
+* 令牌自省
+* 令牌吊销
+* 支持 PKCE
 * .....(未完待续)
 
 **缺失功能：**
 
-* 令牌自省
-* 令牌吊销
-* PKCE
 * ID Token
 * 支持完整的 Open ID Connect 协议。
 
@@ -199,12 +199,29 @@ authorizationServerConfigurer.authorizationEndpoint(new Customizer<Authorization
 
 ### TokenEndpointConfigurer
 
-配置令牌端点的功能。
+配置令牌端点的功能。暂无可配置项
 
 ```java
 authorizationServerConfigurer.tokenEndpoint(new Customizer<TokenEndpointConfigurer>(){
     @Override
     public void customize(TokenEndpointConfigurer configurer){
+
+    }
+});
+```
+
+### IntrospectionEndpointConfigurer
+
+配置令牌自省端点的功能。
+
+* tokenConverter
+
+  用于自定义令牌响应格式。缺省实现为 **DefaultTokenConverter**
+
+```java
+authorizationServerConfigurer.introspectionEndpoint(new Customizer<IntrospectionEndpointConfigurer>(){
+    @Override
+    public void customize(IntrospectionEndpointConfigurer configurer){
 
     }
 });

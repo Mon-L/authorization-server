@@ -149,8 +149,8 @@ public class TokenEndpointTest {
         accessToken.setValue("abc123efg");
         Mockito.when(tokenGranter.grant(client, tokenRequest)).thenReturn(accessToken);
 
-        ResponseEntity<Map<String, String>> rsp = tokenEndpoint.token(clientAuth, requestParameters);
-        Map<String, String> body = rsp.getBody();
+        ResponseEntity<Map<String, Object>> rsp = tokenEndpoint.token(clientAuth, requestParameters);
+        Map<String, Object> body = rsp.getBody();
 
         Assertions.assertThat(rsp).isNotNull();
         Assertions.assertThat(rsp.getStatusCode().value()).isEqualTo(200);

@@ -94,7 +94,7 @@ public class AuthorizationServerConfigurer {
         tokenGranter = setIfNullable(tokenGranter, () -> {
             CompositeTokenGranter compositeTokenGranter = new CompositeTokenGranter();
 
-            compositeTokenGranter.addTokenGranter(new AuthorizationCodeTokenGranter(
+            compositeTokenGranter.addTokenGranter(new AuthorizationCodeTokenGranter(serverConfig,
                     getConfigurer(AuthorizationEndpointConfigurer.class).getAuthorizationCodeService(), tokenService));
             compositeTokenGranter.addTokenGranter(new ClientCredentialsTokenGranter(tokenService));
             compositeTokenGranter.addTokenGranter(new ImplicitTokenGranter(tokenService));
@@ -184,6 +184,11 @@ public class AuthorizationServerConfigurer {
         return this;
     }
 
+    public AuthorizationServerConfigurer introspectionEndpoint(Customizer<IntrospectionEndpointConfigurer> configurer) {
+        configurer.customize(getConfigurer(IntrospectionEndpointConfigurer.class));
+        return this;
+    }
+
     public AuthorizationServerConfigurer clientAuthentication(Customizer<ClientAuthenticationConfigurer> configurer) {
         configurer.customize(getConfigurer(ClientAuthenticationConfigurer.class));
         return this;
@@ -209,6 +214,8 @@ public class AuthorizationServerConfigurer {
         configurers.put(AuthorizationEndpointConfigurer.class, new AuthorizationEndpointConfigurer());
         configurers.put(TokenEndpointConfigurer.class, new TokenEndpointConfigurer());
         configurers.put(TokenAuthenticationConfigurer.class, new TokenAuthenticationConfigurer());
+        configurers.put(IntrospectionEndpointConfigurer.class, new IntrospectionEndpointConfigurer());
+        configurers.put(RevocationEndpointConfigurer.class, new RevocationEndpointConfigurer());
         return configurers;
     }
 

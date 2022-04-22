@@ -34,13 +34,12 @@ public class AuthorizationEndpointConfigurer extends SecurityConfigurerAdapter<D
         endpoint.setClientService(builder.getSharedObject(ClientService.class));
         endpoint.setRequestResolver(builder.getSharedObject(RequestResolver.class));
 
-        RequestMappingDetector requestMappingDetector = builder.getSharedObject(RequestMappingDetector.class);
-        Assert.notNull(requestMappingDetector, "RequestMappingDetector must not be null.");
-        requestMappingDetector.detectHandlerMethods(
-                AuthorizationEndpoint.class,
-                endpoint,
-                requestMappingInfo -> requestMappingInfo.paths(serverConfig.getAuthorizationEndpoint())
-        );
+        builder.getSharedObject(RequestMappingDetector.class)
+                .detectHandlerMethods(
+                        AuthorizationEndpoint.class,
+                        endpoint,
+                        requestMappingInfo -> requestMappingInfo.paths(serverConfig.getAuthorizationEndpoint())
+                );
     }
 
     public AuthorizationEndpointConfigurer approvalService(ApprovalService approvalService) {

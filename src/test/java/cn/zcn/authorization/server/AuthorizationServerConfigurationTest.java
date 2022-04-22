@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.config.Customizer;
 import org.springframework.web.servlet.HandlerExecutionChain;
@@ -76,9 +77,28 @@ public class AuthorizationServerConfigurationTest {
         Assertions.assertNotNull(chain);
     }
 
+
     @Test
     public void checkTokenEndpoint() throws Exception {
         HttpServletRequest request = new MockHttpServletRequest(HttpMethod.POST.name(), ServerConfig.TOKEN_ENDPOINT);
+        request.setAttribute(ServletRequestPathUtils.PATH_ATTRIBUTE, ServletRequestPathUtils.parseAndCache(request));
+        HandlerExecutionChain chain = handlerMapping.getHandler(request);
+        Assertions.assertNotNull(chain);
+    }
+
+    @Test
+    public void checkIntrospectionEndpoint() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest(HttpMethod.POST.name(), ServerConfig.INTROSPECTION_ENDPOINT);
+        request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
+        request.setAttribute(ServletRequestPathUtils.PATH_ATTRIBUTE, ServletRequestPathUtils.parseAndCache(request));
+        HandlerExecutionChain chain = handlerMapping.getHandler(request);
+        Assertions.assertNotNull(chain);
+    }
+
+    @Test
+    public void checkRevocationEndpoint() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest(HttpMethod.POST.name(), ServerConfig.REVOCATION_ENDPOINT);
+        request.setContentType(MediaType.APPLICATION_FORM_URLENCODED.toString());
         request.setAttribute(ServletRequestPathUtils.PATH_ATTRIBUTE, ServletRequestPathUtils.parseAndCache(request));
         HandlerExecutionChain chain = handlerMapping.getHandler(request);
         Assertions.assertNotNull(chain);

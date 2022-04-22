@@ -17,6 +17,8 @@ public class ServerConfig {
     private final String tokenEndpoint;
     private final String introspectionEndpoint;
     private final String revocationEndpoint;
+    private final boolean pkceRequried;
+    private final boolean pkceS256Required;
     private final Map<String, Object> additionalClaims;
 
     private ServerConfig(String issuer,
@@ -24,12 +26,16 @@ public class ServerConfig {
                          String tokenEndpoint,
                          String introspectionEndpoint,
                          String revocationEndpoint,
+                         boolean pkceRequried,
+                         boolean pkceS256Required,
                          Map<String, Object> additionalClaims) {
         this.issuer = issuer;
         this.authorizationEndpoint = authorizationEndpoint;
         this.tokenEndpoint = tokenEndpoint;
         this.introspectionEndpoint = introspectionEndpoint;
         this.revocationEndpoint = revocationEndpoint;
+        this.pkceRequried = pkceRequried;
+        this.pkceS256Required = pkceS256Required;
         this.additionalClaims = additionalClaims;
     }
 
@@ -53,6 +59,14 @@ public class ServerConfig {
         return revocationEndpoint;
     }
 
+    public boolean isPkceRequried() {
+        return pkceRequried;
+    }
+
+    public boolean isPkceS256Required() {
+        return pkceS256Required;
+    }
+
     public <T> T getClaim(String key) {
         Object v = additionalClaims.get(key);
         return v == null ? null : (T) v;
@@ -65,6 +79,8 @@ public class ServerConfig {
         private String tokenEndpoint = TOKEN_ENDPOINT;
         private String introspectionEndpoint = INTROSPECTION_ENDPOINT;
         private String revocationEndpoint = REVOCATION_ENDPOINT;
+        private boolean pkceRequried = false;
+        private boolean pkceS256Required = false;
         private final Map<String, Object> additionalClaims = new HashMap<>();
 
         public Builder issuer(String issuer) {
@@ -92,6 +108,16 @@ public class ServerConfig {
             return this;
         }
 
+        public Builder pkceRequried(boolean pkceRequried) {
+            this.pkceRequried = pkceRequried;
+            return this;
+        }
+
+        public Builder pkceS256Required(boolean pkceS256Required) {
+            this.pkceS256Required = pkceS256Required;
+            return this;
+        }
+
         public Builder additionalClaims(String key, Object val) {
             this.additionalClaims.put(key, val);
             return this;
@@ -103,6 +129,8 @@ public class ServerConfig {
                     tokenEndpoint,
                     introspectionEndpoint,
                     revocationEndpoint,
+                    pkceRequried,
+                    pkceS256Required,
                     additionalClaims
             );
         }

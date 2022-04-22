@@ -5,6 +5,7 @@ import cn.zcn.authorization.server.RequestMappingDetector;
 import cn.zcn.authorization.server.RequestResolver;
 import cn.zcn.authorization.server.ServerConfig;
 import cn.zcn.authorization.server.endpoint.TokenEndpoint;
+import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.grant.TokenGranter;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,13 +31,13 @@ public class TokenEndpointConfigurer extends SecurityConfigurerAdapter<DefaultSe
         endpoint.setClientService(builder.getSharedObject(ClientService.class));
         endpoint.setRequestResolver(builder.getSharedObject(RequestResolver.class));
         endpoint.setTokenGranter(builder.getSharedObject(TokenGranter.class));
+        endpoint.setExceptionWriter(builder.getSharedObject(ExceptionWriter.class));
 
-        RequestMappingDetector requestMappingDetector = builder.getSharedObject(RequestMappingDetector.class);
-        Assert.notNull(requestMappingDetector, "RequestMappingDetector must not be null.");
-        requestMappingDetector.detectHandlerMethods(
-                TokenEndpoint.class,
-                endpoint,
-                requestMappingInfo -> requestMappingInfo.paths(serverConfig.getTokenEndpoint())
-        );
+        builder.getSharedObject(RequestMappingDetector.class)
+                .detectHandlerMethods(
+                        TokenEndpoint.class,
+                        endpoint,
+                        requestMappingInfo -> requestMappingInfo.paths(serverConfig.getTokenEndpoint())
+                );
     }
 }

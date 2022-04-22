@@ -3,6 +3,8 @@ package cn.zcn.authorization.server.configuration;
 import cn.zcn.authorization.server.RequestMappingDetector;
 import cn.zcn.authorization.server.configurer.AuthorizationServerConfigurer;
 import cn.zcn.authorization.server.endpoint.AuthorizationEndpoint;
+import cn.zcn.authorization.server.endpoint.IntrospectionEndpoint;
+import cn.zcn.authorization.server.endpoint.RevocationEndpoint;
 import cn.zcn.authorization.server.endpoint.TokenEndpoint;
 import cn.zcn.authorization.server.exception.ExceptionWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class AuthorizationServerConfiguration extends WebSecurityConfigurerAdapt
         http.setSharedObject(RequestMappingDetector.class, requestMappingDetector());
         http.setSharedObject(AuthorizationEndpoint.class, authorizationEndpoint());
         http.setSharedObject(TokenEndpoint.class, tokenEndpoint());
+        http.setSharedObject(IntrospectionEndpoint.class, introspectionEndpoint());
+        http.setSharedObject(RevocationEndpoint.class, revocationEndpoint());
 
         serverConfigurer.init(http);
 
@@ -86,5 +90,25 @@ public class AuthorizationServerConfiguration extends WebSecurityConfigurerAdapt
     @Bean
     public TokenEndpoint tokenEndpoint() {
         return new TokenEndpoint();
+    }
+
+    /**
+     * 令牌自省端点实例。该类不含 {@link org.springframework.stereotype.Controller}，Spring不会解析它方法上的 {@link RequestMapping} 注解
+     *
+     * @return IntrospectionEndpoint
+     */
+    @Bean
+    public IntrospectionEndpoint introspectionEndpoint() {
+        return new IntrospectionEndpoint();
+    }
+
+    /**
+     * 令牌吊销端点实例。该类不含 {@link org.springframework.stereotype.Controller}，Spring不会解析它方法上的 {@link RequestMapping} 注解
+     *
+     * @return RevocationEndpoint
+     */
+    @Bean
+    public RevocationEndpoint revocationEndpoint() {
+        return new RevocationEndpoint();
     }
 }

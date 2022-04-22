@@ -1,5 +1,7 @@
 package cn.zcn.authorization.server.utils;
 
+import cn.zcn.authorization.server.OAuth2Constants;
+import com.nimbusds.jose.util.Base64URL;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -10,6 +12,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class OAuth2Utils {
@@ -28,6 +32,18 @@ public class OAuth2Utils {
             result.addAll(Arrays.asList(tokens));
         }
         return result;
+    }
+
+    public static String createCodeChallenge(String codeChallengeMethod, String codeVerifier) throws NoSuchAlgorithmException {
+        if (codeChallengeMethod.equals(OAuth2Constants.PKCE.PLAIN)) {
+            return codeVerifier;
+        } else if (codeChallengeMethod.equals(OAuth2Constants.PKCE.S256)) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(codeVerifier.getBytes(StandardCharsets.US_ASCII));
+            return Base64URL.encode(bytes).toString();
+        }
+
+        throw new IllegalArgumentException("Illegal code challenge method : " + codeChallengeMethod);
     }
 
     /**

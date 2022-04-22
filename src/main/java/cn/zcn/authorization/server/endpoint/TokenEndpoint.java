@@ -1,6 +1,7 @@
 package cn.zcn.authorization.server.endpoint;
 
 import cn.zcn.authorization.server.*;
+import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.exception.OAuth2Error;
 import cn.zcn.authorization.server.grant.TokenGranter;
 import cn.zcn.authorization.server.utils.OAuth2Utils;
@@ -10,10 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.ServletWebRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,9 +31,10 @@ public class TokenEndpoint {
     private TokenGranter tokenGranter;
     private ClientService clientService;
     private RequestResolver requestResolver;
+    private ExceptionWriter exceptionWriter;
 
     @RequestMapping(value = ServerConfig.TOKEN_ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<Map<String, String>> token(Principal principal, @RequestParam Map<String, String> parameters) {
+    public ResponseEntity<Map<String, Object>> token(Principal principal, @RequestParam Map<String, String> parameters) {
         if (!(principal instanceof Authentication)) {
             throw new InsufficientAuthenticationException("No client authentication present.");
         }
@@ -70,12 +77,12 @@ public class TokenEndpoint {
         return toResponse(accessToken);
     }
 
-    private ResponseEntity<Map<String, String>> toResponse(AccessToken accessToken) {
+    private ResponseEntity<Map<String, Object>> toResponse(AccessToken accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Cache-Control", "no-store");
         headers.set("Pragma", "no-cache");
 
-        Map<String, String> rsp = new LinkedHashMap<>();
+        Map<String, Object> rsp = new LinkedHashMap<>();
         rsp.put(OAuth2Constants.FIELD.CLIENT_ID, accessToken.getClientId());
         rsp.put(OAuth2Constants.FIELD.TOKEN_TYPE, accessToken.getTokenType().name());
         rsp.put(OAuth2Constants.FIELD.ACCESS_TOKEN, accessToken.getValue());
@@ -91,7 +98,6 @@ public class TokenEndpoint {
         return new ResponseEntity<>(rsp, headers, HttpStatus.OK);
     }
 
-
     private String parseClientId(Principal principal) {
         Authentication client = (Authentication) principal;
         if (!client.isAuthenticated()) {
@@ -105,6 +111,11 @@ public class TokenEndpoint {
         return client.getName();
     }
 
+    @ExceptionHandler(Exception.class)
+    public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        exceptionWriter.write(e, new ServletWebRequest(request, response));
+    }
+
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
     }
@@ -115,5 +126,9 @@ public class TokenEndpoint {
 
     public void setRequestResolver(RequestResolver requestResolver) {
         this.requestResolver = requestResolver;
+    }
+
+    public void setExceptionWriter(ExceptionWriter exceptionWriter) {
+        this.exceptionWriter = exceptionWriter;
     }
 }
