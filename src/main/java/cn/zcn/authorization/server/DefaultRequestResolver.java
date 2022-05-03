@@ -41,11 +41,11 @@ public class DefaultRequestResolver implements RequestResolver {
         );
 
         if (!StringUtils.hasText(request.getClientId())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Missing client id");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Missing client id");
         }
 
         if (request.getResponseType().isEmpty()) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Missing response type");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Missing response type");
         }
 
         if (parameters.containsKey(OAuth2Constants.FIELD.REQUEST)) {
@@ -68,7 +68,7 @@ public class DefaultRequestResolver implements RequestResolver {
         try {
             jwt = JWTParser.parse(authorizationRequest.getOriginalParameters().get(OAuth2Constants.FIELD.REQUEST));
         } catch (ParseException e) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Failed to parse request parameters.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Failed to parse request parameters.");
         }
 
         try {
@@ -76,7 +76,7 @@ public class DefaultRequestResolver implements RequestResolver {
 
                 JWSAlgorithm requestObjectSigningAlg = client.getRequestObjectSigningAlg();
                 if (requestObjectSigningAlg != null && !JWSAlgorithm.NONE.equals(requestObjectSigningAlg)) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Excepted signed request object, but got plain jwt.");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Excepted signed request object, but got plain jwt.");
                 }
 
             } else if (jwt instanceof SignedJWT) {
@@ -95,29 +95,29 @@ public class DefaultRequestResolver implements RequestResolver {
 
             }
         } catch (JOSERuntimeException e) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, e.getMessage(), e);
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, e.getMessage(), e);
         }
 
         try {
             JWTClaimsSet claims = jwt.getJWTClaimsSet();
 
             if (!client.getClientId().equals(claims.getIssuer())) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Mismatch between request object iss and client id");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Mismatch between request object iss and client id");
             }
 
             if (claims.getAudience() == null || !claims.getAudience().contains(serverConfig.getIssuer())) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Request object aud must contain issuer.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Request object aud must contain issuer.");
             }
 
             String clientId = claims.getStringClaim(OAuth2Constants.FIELD.CLIENT_ID);
             if (StringUtils.hasText(clientId) && clientId.equals(client.getClientId())) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Mismatch between request object and authorization parameter for client_id.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Mismatch between request object and authorization parameter for client_id.");
             }
 
             Set<String> responseTypes = OAuth2Utils.parseParameterList(claims.getStringClaim(OAuth2Constants.FIELD.RESPONSE_TYPE));
             if (!responseTypes.isEmpty()) {
                 if (!responseTypes.equals(authorizationRequest.getResponseType())) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Mismatch between request object and authorization parameter for response_type");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Mismatch between request object and authorization parameter for response_type");
                 }
             }
 
@@ -159,15 +159,15 @@ public class DefaultRequestResolver implements RequestResolver {
                 authorizationRequest.getParameters().put(OAuth2Constants.FIELD.MAX_AGE, maxAge.toString());
             }
         } catch (ParseException e) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Failed to parse request object payload.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Failed to parse request object payload.");
         }
     }
 
-    private void verifySignature(Client client, SignedJWT signedJWT) throws OAuth2Exception{
+    private void verifySignature(Client client, SignedJWT signedJWT) throws OAuth2Exception {
         JWTVerifier jwtVerifier = clientJOSEService.getVerifier(client, signedJWT.getHeader().getAlgorithm());
 
         if (jwtVerifier.verify(signedJWT)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Invalid request object signature.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Invalid request object signature.");
         }
     }
 

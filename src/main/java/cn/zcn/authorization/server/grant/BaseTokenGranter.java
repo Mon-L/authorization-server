@@ -29,7 +29,7 @@ public abstract class BaseTokenGranter implements TokenGranter {
 
         Set<String> grantTypes = client.getGrantTypes();
         if (grantTypes != null && !grantTypes.contains(supportedGrantType)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Client dont support grant type: " + supportedGrantType);
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Client dont support grant type: " + supportedGrantType);
         }
 
         return doGrant(client, tokenRequest);

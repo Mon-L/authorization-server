@@ -4,6 +4,7 @@ package cn.zcn.authorization.server.endpoint;
 import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.exception.OAuth2Error;
+import cn.zcn.authorization.server.exception.OAuth2Exception;
 import com.google.common.base.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +64,7 @@ public class RevocationEndpoint {
 
         if (!Strings.isNullOrEmpty(tokenTypeHint)) {
             if (!tokenTypeHint.equals(ACCESS_TOKEN_TYPE_HINT) && !tokenTypeHint.equals(REFRESH_TOKEN_TYPE_HINT)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Unsupported toke type: " + tokenTypeHint);
+                throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Unsupported toke type: " + tokenTypeHint);
             }
 
             if (ACCESS_TOKEN_TYPE_HINT.equals(tokenTypeHint)) {

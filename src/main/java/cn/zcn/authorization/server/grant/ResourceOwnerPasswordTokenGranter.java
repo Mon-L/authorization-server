@@ -32,7 +32,7 @@ public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
         String password = tokenRequest.getRequestParameters().get("password");
 
         if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Username and password must be supplied.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Username and password must be supplied.");
         }
 
         tokenRequest.getRequestParameters().remove("password");
@@ -43,11 +43,11 @@ public class ResourceOwnerPasswordTokenGranter extends BaseTokenGranter {
         try {
             userAuth = authenticationManager.authenticate(userAuth);
         } catch (AuthenticationException e) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, e.getMessage());
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, e.getMessage());
         }
 
         if (userAuth == null || !userAuth.isAuthenticated()) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between username and password.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between username and password.");
         }
 
         return tokenService.issueTokenBoundUser(client, new OAuth2Authentication(tokenRequest, userAuth));

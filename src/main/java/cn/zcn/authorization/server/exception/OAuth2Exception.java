@@ -87,4 +87,18 @@ public class OAuth2Exception extends RuntimeException {
                 '}';
     }
 
+    public static OAuth2Exception make(OAuth2Error oauth2Error) {
+        return new OAuth2Exception(oauth2Error.getErrorCode())
+                .httpStatus(oauth2Error.getHttpStatus());
+    }
+
+    public static OAuth2Exception make(OAuth2Error oauth2Error, String message) {
+        return new OAuth2Exception(oauth2Error.getErrorCode(), message)
+                .httpStatus(oauth2Error.getHttpStatus());
+    }
+
+    public static OAuth2Exception make(OAuth2Error oauth2Error, String message, Exception cause) {
+        return new OAuth2Exception(oauth2Error.getErrorCode(), message, cause)
+                .httpStatus(oauth2Error.getHttpStatus());
+    }
 }

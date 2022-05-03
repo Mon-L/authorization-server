@@ -31,22 +31,22 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
         String redirectUri = parameters.get(OAuth2Constants.FIELD.REDIRECT_URI);
 
         if (authorizationCode == null) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An authorization code must be supplied.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "An authorization code must be supplied.");
         }
 
         if (!StringUtils.hasText(redirectUri)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An redirect uri must be supplied.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "An redirect uri must be supplied.");
         }
 
         UserApprovalAuthentication userApprovalAuthentication = authorizationCodeService.consumeAuthorizationCode(authorizationCode);
         AuthorizationRequest authorizationRequest = userApprovalAuthentication.getAuthorizationRequest();
 
         if (!client.getClientId().equals(authorizationRequest.getClientId())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch client id.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch client id.");
         }
 
         if (!redirectUri.equals(authorizationRequest.getRedirectUri())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch redirect uri.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch redirect uri.");
         }
 
         validatePKCEParameter(tokenRequest, authorizationRequest);
@@ -73,11 +73,11 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
          */
         if (serverConfig.isPkceRequried()) {
             if (!StringUtils.hasText(codeChallenge)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "A code_challenge must be supplied in authorization code grant type.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "A code_challenge must be supplied in authorization code grant type.");
             }
 
             if (!StringUtils.hasText(codeVerifier)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "A code_verifier must be supplied in authorization code grant type.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "A code_verifier must be supplied in authorization code grant type.");
             }
         }
 
@@ -91,20 +91,20 @@ public class AuthorizationCodeTokenGranter extends BaseTokenGranter {
              * 判断是否必须使用 S256
              */
             if (serverConfig.isPkceS256Required() && pkceMethod.equals(OAuth2Constants.PKCE.PLAIN)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Code challenge method must be S256.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Code challenge method must be S256.");
             }
 
             if (!StringUtils.hasText(codeVerifier)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Missing code_verifier parameter.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Missing code_verifier parameter.");
             }
 
             try {
                 String expectedCodeChallenge = OAuth2Utils.createCodeChallenge(pkceMethod, codeVerifier);
                 if (!codeChallenge.equals(expectedCodeChallenge)) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between code_verifier and code_challenge.");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between code_verifier and code_challenge.");
                 }
             } catch (NoSuchAlgorithmException e) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, e.getMessage(), e);
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, e.getMessage(), e);
             }
         }
     }

@@ -2,6 +2,7 @@ package cn.zcn.authorization.server.grant;
 
 import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.OAuth2Error;
+import cn.zcn.authorization.server.exception.OAuth2Exception;
 import org.springframework.util.StringUtils;
 
 /**
@@ -19,7 +20,7 @@ public class RefreshTokenGranter extends BaseTokenGranter {
         String refreshToken = tokenRequest.getRequestParameters().get(OAuth2Constants.FIELD.REFRESH_TOKEN);
 
         if (!StringUtils.hasText(refreshToken)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "An refresh token must be supplied.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "An refresh token must be supplied.");
         }
 
         OAuth2Authentication oauth2Authentication = tokenService.loadAuthenticationWithRefreshToken(refreshToken);

@@ -51,14 +51,14 @@ public class AuthorizationEndpoint {
         Set<String> clientScope = client.getScope();
         for (String scope : requestedScope) {
             if (!clientScope.contains(scope)) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between requested scopes and client scopes.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between requested scopes and client scopes.");
             }
         }
 
         //check supported response type
         String responseType = OAuth2Utils.joinParameterString(authorizationRequest.getResponseType());
         if (!client.getResponseTypes().contains(responseType)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported response type : " + responseType);
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Unsupported response type : " + responseType);
         }
 
         // check approve
@@ -69,7 +69,7 @@ public class AuthorizationEndpoint {
             if (authorizationRequest.getResponseType().contains(OAuth2Constants.FIELD.CODE)) {
                 //check supported grant type
                 if (!client.getGrantTypes().contains(OAuth2Constants.GRANT_TYPE.AUTHORIZATION_CODE)) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported grant type : authorization_code.");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Unsupported grant type : authorization_code.");
                 }
 
                 //issue authorization code
@@ -77,7 +77,7 @@ public class AuthorizationEndpoint {
             } else if (authorizationRequest.getResponseType().contains(OAuth2Constants.FIELD.TOKEN)) {
                 //check supported grant type
                 if (!client.getGrantTypes().contains(OAuth2Constants.GRANT_TYPE.IMPLICIT)) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported grant type : implicit.");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Unsupported grant type : implicit.");
                 }
 
                 // issue access token
@@ -96,14 +96,14 @@ public class AuthorizationEndpoint {
 
         AuthorizationRequest authorizationRequest = approvalService.loadAuthorizationRequestAfterUserApproval(request, approvalParameters);
         if (authorizationRequest == null) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_REQUEST, "Cannot approve uninitialized authorization request.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_REQUEST, "Cannot approve uninitialized authorization request.");
         }
 
         boolean isApproved = approvalService.updateApprovalOrDenying((Authentication) principal, authorizationRequest, approvalParameters);
         authorizationRequest.setApproved(isApproved);
 
         if (!isApproved) {
-            String redirectUri = buildErrorRedirectUrl(authorizationRequest, OAuth2Error.createException(OAuth2Error.ACCESS_DENIED, "User denied access"));
+            String redirectUri = buildErrorRedirectUrl(authorizationRequest, OAuth2Exception.make(OAuth2Error.ACCESS_DENIED, "User denied access"));
             return new RedirectView(redirectUri, false, true, false);
         }
 
@@ -151,7 +151,7 @@ public class AuthorizationEndpoint {
 
             AccessToken accessToken = tokenGranter.grant(client, tokenRequest);
             if (accessToken == null) {
-                throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported grant type : implicit.");
+                throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Unsupported grant type : implicit.");
             }
 
             Map<String, String> response = new LinkedHashMap<>();
@@ -215,11 +215,11 @@ public class AuthorizationEndpoint {
      */
     private void validateRedirectUri(String requestedRedirectUri, Set<String> clientRegisterUris) throws OAuth2Exception {
         if (!StringUtils.hasText(requestedRedirectUri)) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Missing redirect uri!");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Missing redirect uri!");
         }
 
         if (clientRegisterUris == null || clientRegisterUris.isEmpty()) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "clientRegisteredUri is empty!");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "clientRegisteredUri is empty!");
         }
 
         int i = 0;
@@ -231,7 +231,7 @@ public class AuthorizationEndpoint {
         }
 
         if (i == clientRegisterUris.size()) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between requestedRedirectUri and clientRegisterUris.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between requestedRedirectUri and clientRegisterUris.");
         }
     }
 

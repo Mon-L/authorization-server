@@ -3,6 +3,7 @@ package cn.zcn.authorization.server.endpoint;
 import cn.zcn.authorization.server.*;
 import cn.zcn.authorization.server.exception.ExceptionWriter;
 import cn.zcn.authorization.server.exception.OAuth2Error;
+import cn.zcn.authorization.server.exception.OAuth2Exception;
 import cn.zcn.authorization.server.grant.TokenGranter;
 import cn.zcn.authorization.server.utils.OAuth2Utils;
 import org.springframework.http.HttpHeaders;
@@ -44,11 +45,11 @@ public class TokenEndpoint {
         TokenRequest tokenRequest = requestResolver.resolve2TokenRequest(parameters, authenticatedClient);
 
         if (!StringUtils.hasText(tokenRequest.getGrantType())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Missing grant type.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Missing grant type.");
         }
 
         if (!authenticatedClientId.equals(tokenRequest.getClientId())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between authenticated client id and requested client id.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between authenticated client id and requested client id.");
         }
 
         if (OAuth2Constants.GRANT_TYPE.AUTHORIZATION_CODE.equals(tokenRequest.getGrantType())) {
@@ -56,7 +57,7 @@ public class TokenEndpoint {
         }
 
         if (OAuth2Constants.GRANT_TYPE.IMPLICIT.equals(tokenRequest.getGrantType())) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Should not invoke token endpoint when using implicit grant type.");
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Should not invoke token endpoint when using implicit grant type.");
         }
 
         //如果请求不含有 scope 参数，将会跳过 scope 校验。如授权码模式或客户端不申请任何权限的情况下。
@@ -64,14 +65,14 @@ public class TokenEndpoint {
             Set<String> clientScope = authenticatedClient.getScope();
             for (String scope : tokenRequest.getScope()) {
                 if (!clientScope.contains(scope)) {
-                    throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Mismatch between requested scopes and client scopes.");
+                    throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Mismatch between requested scopes and client scopes.");
                 }
             }
         }
 
         AccessToken accessToken = tokenGranter.grant(authenticatedClient, tokenRequest);
         if (accessToken == null) {
-            throw OAuth2Error.createException(OAuth2Error.INVALID_GRANT, "Unsupported grant type : " + tokenRequest.getGrantType());
+            throw OAuth2Exception.make(OAuth2Error.INVALID_GRANT, "Unsupported grant type : " + tokenRequest.getGrantType());
         }
 
         return toResponse(accessToken);
